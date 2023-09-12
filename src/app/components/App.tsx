@@ -1,29 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { socket } from "~/app/core/socket";
+import { faMusic } from "@fortawesome/free-solid-svg-icons/faMusic";
+import React, { useState } from "react";
+import Container from "react-bootstrap/Container";
+import AddSong from "./AddSong";
+import CoolButton from "./CoolButton";
 
 const App = () => {
-  const [isConnected, setIsConnected] = useState(socket.connected);
-
-  useEffect(() => {
-    function onConnect() {
-      setIsConnected(true);
-    }
-
-    function onDisconnect() {
-      setIsConnected(false);
-    }
-
-    socket.on("connect", onConnect);
-    socket.on("disconnect", onDisconnect);
-
-    return () => {
-      socket.off("connect", onConnect);
-      socket.off("disconnect", onDisconnect);
-    };
-  }, []);
+  const [adding, setAdding] = useState(false);
 
   return (
-    <div>{isConnected ? "connected" : "not connected"}</div>
+    <Container className="mt-3">
+      {adding ? (
+        <AddSong goBack={() => setAdding(false)} />
+      ) : (
+        <div>
+          <div className="d-grid gap-3">
+            <CoolButton icon={faMusic} label="Add Song" onClick={() => setAdding(true)} />
+          </div>
+        </div>
+      )}
+    </Container>
   );
 };
 
