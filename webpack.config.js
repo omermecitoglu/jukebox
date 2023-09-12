@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const autoprefixer = require("autoprefixer")
 const path = require("path");
 
 module.exports = (env, argv) => ([{
@@ -14,6 +16,9 @@ module.exports = (env, argv) => ([{
   plugins: [
     new HtmlWebpackPlugin({
       title: "Jukebox",
+    }),
+    new MiniCssExtractPlugin({
+      filename: "style.css",
     }),
     new CopyWebpackPlugin({
       patterns: [
@@ -29,8 +34,23 @@ module.exports = (env, argv) => ([{
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /\.(sa|sc|c)ss$/i,
+        use: [
+          argv.mode === "production" ? MiniCssExtractPlugin.loader : "style-loader",
+          "css-loader",
+          {
+            // Loader for webpack to process CSS with PostCSS
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  autoprefixer
+                ]
+              }
+            }
+          },
+          "sass-loader",
+        ],
       },
       /* {
         test: /\.js$/,
