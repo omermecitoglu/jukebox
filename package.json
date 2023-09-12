@@ -1,0 +1,37 @@
+{
+  "private": true,
+  "name": "jukebox",
+  "version": "1.0.0",
+  "scripts": {
+    "dev:server": "tsx watch src/server.ts",
+    "dev:client": "webpack serve --config-name=client --mode=development",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build": "rimraf build && webpack --config-name=server --config-name=client --mode=production",
+    "start": "node build/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "socket.io": "^4.7.2",
+    "socket.io-client": "^4.7.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "^6.7.0",
+    "concurrently": "^8.2.1",
+    "copy-webpack-plugin": "^11.0.0",
+    "eslint": "^8.49.0",
+    "eslint-plugin-import": "^2.28.1",
+    "eslint-plugin-unused-imports": "^3.0.0",
+    "html-webpack-plugin": "^5.5.3",
+    "terser-webpack-plugin": "^5.3.9",
+    "ts-loader": "^9.4.4",
+    "tsx": "^3.12.8",
+    "typescript": "^5.2.2",
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
+  }
+}
