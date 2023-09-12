@@ -80,7 +80,11 @@ function downloadYoutubeVideo(videoId: string) {
         }
       });
       resolve(JSON.stringify(data));
-      io.emit("music:download:subscription:remove", data.videoId);
+      io.emit("music:download:subscription:remove", {
+        id: data.videoId,
+        artist: data.artist,
+        title: data.title,
+      });
     });
 
     downloader.on("error", function(error) {
