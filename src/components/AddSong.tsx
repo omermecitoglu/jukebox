@@ -3,22 +3,23 @@ import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import React, { useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { socket } from "~/core/socket";
-import { type Song, addSong } from "../core/songs";
+import { type Song, addSong } from "~/redux/features/library";
+import { useAppDispatch } from "~/redux/hooks";
 import { addSetValue, getSetValues, removeSetValue } from "../core/storage";
 import CoolButton from "./CoolButton";
 import DownloadSubscription from "./DownloadSubscription";
 
 type AddSongProps = {
-  setSongs: React.Dispatch<React.SetStateAction<Song[]>>,
   goBack: () => void,
 };
 
 const AddSong = ({
-  setSongs,
   goBack,
 }: AddSongProps) => {
   const [youtubeLink, setYoutubeLink] = useState("");
   const [subscriptions, setSubscriptions] = useState<string[]>([]);
+
+  const dispatch = useAppDispatch();
 
   const submit = () => {
     socket.emit("music:download:start", youtubeLink);
@@ -33,7 +34,7 @@ const AddSong = ({
     };
 
     const removeSubscription = (song: Song) => {
-      setSongs(addSong(song));
+      dispatch(addSong(song));
       removeSetValue("subscriptions", song.id);
       setSubscriptions(c => c.filter(i => i !== song.id));
     };

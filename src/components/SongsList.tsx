@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
-import type { Song } from "~/core/songs";
+import type { Song } from "~/redux/features/library";
 
 type SongsListProps = {
   collection: Song[],
