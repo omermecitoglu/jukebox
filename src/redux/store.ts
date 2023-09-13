@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 import libraryReducer from "./features/library";
+import playerReducer from "./features/player";
 
 const persistConfig = {
   key: "jukebox",
@@ -13,6 +14,7 @@ const persistConfig = {
 export const store = configureStore({
   reducer: {
     library: persistReducer(persistConfig, libraryReducer),
+    player: playerReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
   middleware: [thunk],

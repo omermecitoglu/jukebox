@@ -7,14 +7,24 @@ import CoolButton from "~/components/CoolButton";
 import SongsList from "~/components/SongsList";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { useAppSelector } from "~/redux/hooks";
+import Player from "./Player";
 import SocketProvider from "./SocketProvider";
 
 const App = () => {
   const isOnline = useNavigatorOnLine();
   const [adding, setAdding] = useState(false);
   const songs = useAppSelector(state => state.library.songs);
+  const isPlaying = useAppSelector(state => state.player.isPlaying);
 
   const goBack = () => setAdding(false);
+
+  if (isPlaying) {
+    return (
+      <Container className="mt-3">
+        <Player />
+      </Container>
+    );
+  }
 
   return (
     <Container className="mt-3">

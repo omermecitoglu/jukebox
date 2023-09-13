@@ -81,6 +81,9 @@ module.exports = (env, argv) => ({
       directory: path.join(__dirname, "public"),
     },
     compress: true,
+    allowedHosts: [
+      "brave-rapidly-osprey.ngrok-free.app"
+    ],
     port: 7700,
   },
 });

@@ -7,7 +7,7 @@ type BootstrapColorVariant = "primary" | "secondary" | "success" | "warning" | "
 
 type CoolButtonProps = {
   icon: IconProp,
-  label: string,
+  label?: string,
   variant?: BootstrapColorVariant,
   onClick?: () => void,
 };
@@ -19,8 +19,8 @@ const CoolButton = ({
   onClick,
 }: CoolButtonProps): React.JSX.Element => (
   <Button variant={variant} onClick={onClick}>
-    <FontAwesomeIcon icon={icon} size="lg" className="fa-fw me-2" />
-    <span className="me-4">{label}</span>
+    <FontAwesomeIcon icon={icon} size="lg" className="fa-fw" />
+    {label && <span className="ms-2 me-4">{label}</span>}
   </Button>
 );
 
