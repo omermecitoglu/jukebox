@@ -1,5 +1,12 @@
-import io from "socket.io-client";
+import { createContext } from "react";
+import { type Socket, io } from "socket.io-client";
 
-const URL = process.env.NODE_ENV === "production" ? undefined : "http://localhost:7701";
+function getSocketHost(): string {
+  return (process.env.NODE_ENV === "production" ? undefined : "http://localhost:7701") as string;
+}
 
-export const socket = io(URL as string);
+export function createConnection() {
+  return io(getSocketHost());
+}
+
+export const SocketContext = createContext<Socket | null>(null);

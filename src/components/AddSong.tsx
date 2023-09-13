@@ -1,8 +1,8 @@
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Form from "react-bootstrap/Form";
-import { socket } from "~/core/socket";
+import { SocketContext } from "~/core/socket";
 import { type Song, addSong } from "~/redux/features/library";
 import { useAppDispatch } from "~/redux/hooks";
 import { addSetValue, getSetValues, removeSetValue } from "../core/storage";
@@ -16,13 +16,16 @@ type AddSongProps = {
 const AddSong = ({
   goBack,
 }: AddSongProps) => {
+  const socket = useContext(SocketContext);
   const [youtubeLink, setYoutubeLink] = useState("");
   const [subscriptions, setSubscriptions] = useState<string[]>([]);
 
   const dispatch = useAppDispatch();
 
   const submit = () => {
-    socket.emit("music:download:start", youtubeLink);
+    if (socket) {
+      socket.emit("music:download:start", youtubeLink);
+    }
   };
 
   useEffect(() => {
@@ -39,12 +42,16 @@ const AddSong = ({
       setSubscriptions(c => c.filter(i => i !== song.id));
     };
 
-    socket.on("music:download:subscription:add", addSubscription);
-    socket.on("music:download:subscription:remove", removeSubscription);
+    if (socket) {
+      socket.on("music:download:subscription:add", addSubscription);
+      socket.on("music:download:subscription:remove", removeSubscription);
+    }
 
     return () => {
-      socket.off("music:download:subscription:add", addSubscription);
-      socket.off("music:download:subscription:remove", removeSubscription);
+      if (socket) {
+        socket.off("music:download:subscription:add", addSubscription);
+        socket.off("music:download:subscription:remove", removeSubscription);
+      }
     };
   }, []);
 

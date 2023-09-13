@@ -7,6 +7,7 @@ import CoolButton from "~/components/CoolButton";
 import SongsList from "~/components/SongsList";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { useAppSelector } from "~/redux/hooks";
+import SocketProvider from "./SocketProvider";
 
 const App = () => {
   const isOnline = useNavigatorOnLine();
@@ -19,7 +20,9 @@ const App = () => {
     <Container className="mt-3">
       {adding ? (
         isOnline ? (
-          <AddSong goBack={goBack} />
+          <SocketProvider>
+            <AddSong goBack={goBack} />
+          </SocketProvider>
         ) : (
           <div>
             <p>You can't add songs in offline mode</p>

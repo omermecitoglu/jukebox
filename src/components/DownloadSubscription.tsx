@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
-import { socket } from "~/core/socket";
+import { SocketContext } from "~/core/socket";
 
 type DownloadSubscriptionProps = {
   downloadId: string,
@@ -9,6 +9,7 @@ type DownloadSubscriptionProps = {
 const DownloadSubscription = ({
   downloadId,
 }: DownloadSubscriptionProps) => {
+  const socket = useContext(SocketContext);
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
@@ -16,10 +17,14 @@ const DownloadSubscription = ({
       setPercentage(p);
     };
 
-    socket.on("music:download:subscription:progress:" + downloadId, handleProgress);
+    if (socket) {
+      socket.on("music:download:subscription:progress:" + downloadId, handleProgress);
+    }
 
     return () => {
-      socket.off("music:download:subscription:progress:" + downloadId, handleProgress);
+      if (socket) {
+        socket.off("music:download:subscription:progress:" + downloadId, handleProgress);
+      }
     };
   }, [downloadId]);
 
