@@ -26,7 +26,7 @@ const DownloadSubscription = ({
         socket.off("music:download:subscription:progress:" + downloadId, handleProgress);
       }
     };
-  }, [downloadId]);
+  }, [downloadId, socket]);
 
   return <ProgressBar key={downloadId} animated now={percentage} />;
 };
