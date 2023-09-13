@@ -9,3 +9,9 @@ rootDiv.id = "app";
 document.body.appendChild(rootDiv);
 const root = createRoot(rootDiv);
 root.render(<ReduxProvider><App /></ReduxProvider>);
+
+if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/service-worker.js");
+  });
+}

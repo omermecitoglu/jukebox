@@ -2,17 +2,12 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const WorkboxPlugin = require("workbox-webpack-plugin");
 const autoprefixer = require("autoprefixer")
 const path = require("path");
 
-module.exports = (env, argv) => ({
-  entry: "./src/index.tsx",
-  output: {
-    filename: "index.js",
-    path: path.resolve(__dirname, "build"),
-  },
-  target: "web",
-  plugins: [
+const bundlePlugins = (mode) => {
+  const plugins = [
     new HtmlWebpackPlugin({
       title: "Jukebox",
     }),
@@ -24,7 +19,24 @@ module.exports = (env, argv) => ({
         { from: "public", to: "." },
       ],
     }),
-  ],
+  ];
+  if (mode === "production") {
+    plugins.push(new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
+    }));
+  }
+  return plugins;
+};
+
+module.exports = (env, argv) => ({
+  entry: "./src/index.tsx",
+  output: {
+    filename: "index.js",
+    path: path.resolve(__dirname, "build"),
+  },
+  target: "web",
+  plugins: bundlePlugins(argv.mode),
   optimization: {
     minimizer: [new TerserPlugin({
       extractComments: false,
