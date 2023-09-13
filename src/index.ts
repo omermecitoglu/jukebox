@@ -5,6 +5,7 @@ io.on("connection", (socket) => {
   socket.on("music:download:start", (input: string) => {
     const videoId = startDownload(input);
     if (videoId) {
+      socket.join("download:subscriber:" + videoId);
       socket.emit("music:download:subscription:add", videoId);
     }
   });
