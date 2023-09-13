@@ -1,6 +1,5 @@
 import React, { type ReactNode, useEffect, useState } from "react";
-import { type Socket } from "socket.io-client";
-import { SocketContext, createConnection } from "~/core/socket";
+import { type JukeSocket, SocketContext, createConnection } from "~/core/socket";
 
 type SocketProviderProps = {
   children: ReactNode,
@@ -9,7 +8,7 @@ type SocketProviderProps = {
 const SocketProvider = ({
   children,
 }: SocketProviderProps) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<JukeSocket | null>(null);
 
   useEffect(() => {
     const connection = createConnection();

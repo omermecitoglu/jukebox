@@ -13,17 +13,19 @@ const DownloadSubscription = ({
   const [percentage, setPercentage] = useState(0);
 
   useEffect(() => {
-    const handleProgress = (p: number) => {
-      setPercentage(p);
+    const handleProgress = (videoId: string, p: number) => {
+      if (downloadId === videoId) {
+        setPercentage(p);
+      }
     };
 
     if (socket) {
-      socket.on("music:download:subscription:progress:" + downloadId, handleProgress);
+      socket.on("music:download:subscription:progress", handleProgress);
     }
 
     return () => {
       if (socket) {
-        socket.off("music:download:subscription:progress:" + downloadId, handleProgress);
+        socket.off("music:download:subscription:progress", handleProgress);
       }
     };
   }, [downloadId, socket]);
