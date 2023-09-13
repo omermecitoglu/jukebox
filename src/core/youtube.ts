@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "path";
 import YoutubeMp3Downloader from "youtube-mp3-downloader";
+import { getRecords, saveRecord } from "./db";
 import io from "./socket";
 import type { TrackData } from "./track";
 
@@ -29,7 +30,11 @@ async function runQueue() {
     try {
       const exists = await checkSongExists(videoId);
       if (exists) {
-        // retrieve track data from db!
+        const records = await getRecords("track:" + videoId);
+        const rawData = records["track:" + videoId];
+        if (!rawData) throw new Error("Track is downloaded but its metadata is missing!");
+        const track: TrackData = JSON.parse(rawData);
+        io.emit("music:download:subscription:remove", track);
       } else {
         const data = await downloadYoutubeVideo(videoId);
         console.log(data);
@@ -102,7 +107,7 @@ function downloadYoutubeVideo(videoId: string): Promise<FinishedDownloadData> {
         title: data.title,
       };
 
-      // save track data to database!
+      saveRecord("track:" + data.videoId, JSON.stringify(track)).catch(console.error);
 
       io.emit("music:download:subscription:remove", track);
     });
