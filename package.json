@@ -3,6 +3,7 @@
   "name": "jukebox-client",
   "version": "1.0.0",
   "scripts": {
+    "prebuild": "ts-unused-exports tsconfig.json",
     "dev": "webpack serve --mode=development",
     "build": "rimraf build && webpack --mode=production",
     "start": "node build/index.js"
@@ -39,6 +40,7 @@
     "style-loader": "^3.3.3",
     "terser-webpack-plugin": "^5.3.9",
     "ts-loader": "^9.4.4",
+    "ts-unused-exports": "^10.0.1",
     "typescript": "^5.2.2",
     "webpack": "^5.88.2",
     "webpack-cli": "^5.1.4",
