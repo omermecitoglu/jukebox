@@ -21,7 +21,8 @@ const library = createSlice({
   initialState,
   reducers: {
     addSong: (state, action: PayloadAction<Song>) => {
-      state.songs = Array.from(new Set([...state.songs, action.payload]));
+      const found = state.songs.find(s => s.id === action.payload.id);
+      state.songs = found ? state.songs : Array.from(new Set([...state.songs, action.payload]));
     },
     removeSong: (state, action: PayloadAction<string>) => {
       state.songs = state.songs.filter(s => s.id !== action.payload);

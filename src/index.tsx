@@ -15,3 +15,11 @@ if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service-worker.js");
   });
 }
+
+declare global {
+  interface Window { injectToken?: (hash: string) => void }
+}
+
+if (window.opener?.injectToken) {
+  window.opener.injectToken(window.location.hash);
+}

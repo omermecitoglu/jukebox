@@ -12,7 +12,7 @@ const Player = () => {
   useEffect(() => {
     console.log(currentTrack);
     if (audioPlayer.current) {
-      audioPlayer.current.src = `http://localhost:7701/${currentTrack}.mp3`;
+      audioPlayer.current.src = new URL(`${currentTrack}.mp3`, window.location.href).toString();
     }
   }, [currentTrack]);
 

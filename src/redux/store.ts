@@ -5,6 +5,7 @@ import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 import libraryReducer from "./features/library";
 import playerReducer from "./features/player";
+import userReducer from "./features/user";
 
 const persistConfig = {
   key: "jukebox",
@@ -13,6 +14,7 @@ const persistConfig = {
 
 export const store = configureStore({
   reducer: {
+    user: persistReducer(persistConfig, userReducer),
     library: persistReducer(persistConfig, libraryReducer),
     player: playerReducer,
   },

@@ -1,9 +1,12 @@
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
+import { idealHeight, openCentered } from "~/core/open";
 import { SocketContext } from "~/core/socket";
+import { generateAuthUrl } from "~/core/youtube";
 import { type Song, addDownload, addSong, removeDownload } from "~/redux/features/library";
+import { injectAccessToken } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
 import DownloadSubscription from "./DownloadSubscription";
@@ -17,16 +20,41 @@ const AddSong = ({
 }: AddSongProps) => {
   const socket = useContext(SocketContext);
   const [youtubeLink, setYoutubeLink] = useState("");
+  const accessToken = useAppSelector(state => state.user.accessToken);
   const subscriptions = useAppSelector(state => state.library.downloads);
-
   const dispatch = useAppDispatch();
+  const popup = useRef<Window>();
 
   const submit = () => {
-    if (socket) {
+    if (!socket) return alert("Socket is not connected!");
+    const isPlaylist = /[?&]list=([^#?&]*)/.test(youtubeLink);
+    if (isPlaylist && !accessToken) {
+      const url = generateAuthUrl("69846603813-nq3tculv936hmsgtrdq2n3hbg7p1fe05.apps.googleusercontent.com");
+      popup.current = openCentered(url, "_blank", 600, idealHeight(), {
+        popup: "yes",
+        titlebar: "no",
+        location: "no",
+        toolbar: "no",
+        menubar: "no",
+      });
+      window.injectToken = (hash) => {
+        const match = hash.match(/#access_token=([^&]+)&.*expires_in=(\d+)/);
+        if (match && match[1]) {
+          dispatch(injectAccessToken(match[1]));
+        }
+      };
+    } else {
       setYoutubeLink("");
-      socket.emit("music:download:start", youtubeLink);
+      socket.emit("music:download:request", youtubeLink, accessToken);
     }
   };
+
+  useEffect(() => {
+    if (popup.current && accessToken) {
+      popup.current.close();
+      window.injectToken = undefined;
+    }
+  }, [accessToken]);
 
   useEffect(() => {
     const addSubscription = (downloadId: string) => {

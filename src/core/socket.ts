@@ -9,7 +9,7 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerEvents {
-  "music:download:start": (input: string) => void,
+  "music:download:request": (input: string, youtubeToken: string | null) => void,
 }
 
 function getSocketHost(): string {
