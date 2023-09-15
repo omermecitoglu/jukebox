@@ -13,7 +13,8 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "ignorePatterns": [
-    "webpack.config.js"
+    "webpack.config.js",
+    "public/sw.js"
   ],
   "rules": {
     "sort-imports": ["error", { "ignoreDeclarationSort": true }],

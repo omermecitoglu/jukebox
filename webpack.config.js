@@ -2,7 +2,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WorkboxPlugin = require("workbox-webpack-plugin");
+// const WorkboxPlugin = require("workbox-webpack-plugin");
 const autoprefixer = require("autoprefixer")
 const path = require("path");
 
@@ -21,10 +21,10 @@ const bundlePlugins = (mode) => {
     }),
   ];
   if (mode === "production") {
-    plugins.push(new WorkboxPlugin.GenerateSW({
+    /* plugins.push(new WorkboxPlugin.GenerateSW({
       clientsClaim: true,
       skipWaiting: true,
-    }));
+    })); */
   }
   return plugins;
 };

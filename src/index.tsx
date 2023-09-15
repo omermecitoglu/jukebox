@@ -12,7 +12,7 @@ root.render(<ReduxProvider><App /></ReduxProvider>);
 
 if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/service-worker.js");
+    navigator.serviceWorker.register("/sw.js");
   });
 }
 

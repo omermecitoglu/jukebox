@@ -18,11 +18,17 @@ const ListedSong = ({
 
   useEffect(() => {
     (async () => {
-      const cache = await caches.open("workbox-precache-v2-https://brave-rapidly-osprey.ngrok-free.app/");
+      const cache = await caches.open("v1");
       const response = await cache.match(`/${song.id}.mp3`);
       setIsCached(response?.ok === true);
     })();
   }, [song]);
+
+  useEffect(() => {
+    if (isCached === false) {
+      fetch(`/${song.id}.mp3`).then(response => setIsCached(response.ok));
+    }
+  }, [isCached]);
 
   return (
     <tr key={song.id}>
@@ -33,7 +39,7 @@ const ListedSong = ({
       </td>
       <td valign="middle">
         {(isOnline || isCached) &&
-          <CoolButton icon={faPlay} onClick={() => play(song.id)} />
+          <CoolButton icon={faPlay} onClick={() => play(song.id)} variant={isCached ? "success" : "primary"} />
         }
       </td>
     </tr>
