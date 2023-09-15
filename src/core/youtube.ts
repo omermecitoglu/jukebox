@@ -3,6 +3,7 @@ import path from "path";
 import YoutubeMp3Downloader from "youtube-mp3-downloader";
 import { getRecords, saveRecord } from "./db";
 import io from "./socket";
+import { getVideoIdsFromPlaylist } from "./youtube-api";
 import type { TrackData } from "./track";
 
 type FinishedDownloadData = {
@@ -36,8 +37,8 @@ async function runQueue() {
         const track: TrackData = JSON.parse(rawData);
         io.emit("music:download:subscription:remove", track);
       } else {
-        const data = await downloadYoutubeVideo(videoId);
-        console.log(data);
+        await downloadYoutubeVideo(videoId);
+        console.log(videoId + " has been downloaded");
       }
     } catch (error) {
       console.error(error);
@@ -65,22 +66,37 @@ async function checkSongExists(videoId: string) {
   }
 }
 
-export function startDownload(url: string) {
+export async function requestDownload(url: string, youtubeToken: string | null): Promise<string[]> {
   try {
-    const videoId = getVideoId(url);
-    if (!videoId) throw new Error("Invalid Youtube URL");
-    downloadQueue.push(videoId);
-    return videoId;
+    const playlistId = getPlaylistId(url);
+    if (playlistId) {
+      if (!youtubeToken) throw new Error("Youtube Access Token is not provided.");
+      const videoIds = await getVideoIdsFromPlaylist(playlistId, youtubeToken);
+      for (const videoId of videoIds) {
+        downloadQueue.push(videoId);
+      }
+      return videoIds;
+    } else {
+      const videoId = getVideoId(url);
+      if (!videoId) throw new Error("Invalid Youtube URL");
+      downloadQueue.push(videoId);
+      return [videoId];
+    }
   } catch {
-    return null;
+    return [];
   }
 }
 
+function getPlaylistId(url: string): string | null {
+  const regExp = /[?&]list=([^#?&]*)/;
+  const match = url.match(regExp);
+  return (match && match[1]) ? match[1] : null;
+}
+
 function getVideoId(url: string): string | null {
-  const regex = /(?:\?v=|\/embed\/|\/v\/|\/vi\/|\/e\/|\/u\/\w+\/|\/v=|\/embed\/|\/shorts\/)([A-Za-z0-9_-]{11})/;
+  const regex = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
   const match = regex.exec(url);
-  if (match && match[1]) return match[1];
-  return null;
+  return (match && match[7]) ? match[7] : null;
 }
 
 function downloadYoutubeVideo(videoId: string): Promise<FinishedDownloadData> {
