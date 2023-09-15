@@ -33,7 +33,10 @@ async function runQueue() {
       if (exists) {
         const records = await getRecords("track:" + videoId);
         const rawData = records["track:" + videoId];
-        if (!rawData) throw new Error("Track is downloaded but its metadata is missing!");
+        if (!rawData) {
+          await fs.unlink(path.join(downloadsFolder, videoId + ".mp3"));
+          throw new Error("Track is downloaded but its metadata is missing! " + videoId);
+        }
         const track: TrackData = JSON.parse(rawData);
         io.emit("music:download:subscription:remove", track);
       } else {

@@ -10,12 +10,16 @@ type PlayListItem = {
 
 type PlaylistItems = {
   kind: string,
+  nextPageToken?: string,
   items: PlayListItem[],
 };
 
-export async function getVideoIdsFromPlaylist(playlistId: string, accessToken: string) {
+async function getPlaylistItems(pageToken: string | null, playlistId: string, accessToken: string) {
   const url = new URL("/youtube/v3/playlistItems", "https://youtube.googleapis.com");
   url.searchParams.set("part", "snippet");
+  if (pageToken) {
+    url.searchParams.set("pageToken", pageToken);
+  }
   url.searchParams.set("playlistId", playlistId);
   url.searchParams.set("maxResults", "50");
   url.searchParams.set("key", playlistId);
@@ -29,5 +33,18 @@ export async function getVideoIdsFromPlaylist(playlistId: string, accessToken: s
   if (data.kind !== "youtube#playlistItemListResponse") {
     throw new Error("Invalid Playlist Item List Response");
   }
-  return data.items.map(i => i.snippet.resourceId.videoId);
+  return data;
+}
+
+export async function getVideoIdsFromPlaylist(playlistId: string, accessToken: string): Promise<string[]> {
+  const results = [];
+  let currentPageToken: string | null | undefined;
+  while (typeof currentPageToken !== "undefined") {
+    const data = await getPlaylistItems(currentPageToken, playlistId, accessToken);
+    for (const item of data.items) {
+      results.push(item.snippet.resourceId.videoId);
+    }
+    currentPageToken = data.nextPageToken;
+  }
+  return results;
 }
