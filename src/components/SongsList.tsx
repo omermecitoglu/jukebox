@@ -16,7 +16,7 @@ const SongsList = ({
   const play = (trackId: string) => {
     dispatch(startPlaying({
       playlist: collection,
-      currentTrack: trackId,
+      trackId,
     }));
   };
 

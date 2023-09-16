@@ -86,4 +86,8 @@ module.exports = (env, argv) => ({
     ],
     port: 7700,
   },
+  performance: {
+    maxAssetSize: 1 * 1024 * 1024,     // 1 MB in bytes
+    maxEntrypointSize: 2 * 1024 * 1024, // 2 MB in bytes
+  },
 });

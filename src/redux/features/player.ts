@@ -4,7 +4,7 @@ import type { Song } from "./library";
 interface PlayerState {
   isPlaying: boolean,
   playlist: Song[],
-  currentTrack: string | null,
+  currentTrack: Song | null,
 }
 
 const initialState: PlayerState = {
@@ -17,10 +17,10 @@ const player = createSlice({
   name: "player",
   initialState,
   reducers: {
-    startPlaying: (state, action: PayloadAction<Partial<PlayerState>>) => {
+    startPlaying: (state, action: PayloadAction<{ playlist: Song[], trackId: string }>) => {
       state.isPlaying = true;
-      state.playlist = action.payload.playlist ?? [];
-      state.currentTrack = action.payload.currentTrack ?? null;
+      state.playlist = action.payload.playlist;
+      state.currentTrack = action.payload.playlist.find(track => track.id === action.payload.trackId) ?? null;
     },
     stopPlaying: state => {
       state.isPlaying = false;
@@ -28,12 +28,12 @@ const player = createSlice({
       state.currentTrack = null;
     },
     playPrevSong: state => {
-      const index = state.playlist.findIndex(t => t.id === state.currentTrack);
-      state.currentTrack = state.playlist[(state.playlist.length + (index - 1)) % state.playlist.length].id;
+      const index = state.playlist.findIndex(t => t.id === state.currentTrack?.id);
+      state.currentTrack = state.playlist[(state.playlist.length + (index - 1)) % state.playlist.length];
     },
     playNextSong: state => {
-      const index = state.playlist.findIndex(t => t.id === state.currentTrack);
-      state.currentTrack = state.playlist[(index + 1) % state.playlist.length].id;
+      const index = state.playlist.findIndex(t => t.id === state.currentTrack?.id);
+      state.currentTrack = state.playlist[(index + 1) % state.playlist.length];
     },
   },
 });

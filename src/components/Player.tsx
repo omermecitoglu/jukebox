@@ -5,6 +5,7 @@ import { faPause } from "@fortawesome/free-solid-svg-icons/faPause";
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import React, { useEffect, useRef, useState } from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import { createMetadata } from "~/core/metadata";
 import { playNextSong, playPrevSong, stopPlaying } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
@@ -17,9 +18,16 @@ const Player = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log(currentTrack);
-    if (audioPlayer.current) {
-      audioPlayer.current.src = new URL(`${currentTrack}.mp3`, window.location.href).toString();
+    if (audioPlayer.current && currentTrack) {
+      const host = process.env.NODE_ENV === "production" ? window.location.href : "http://localhost:7701";
+      audioPlayer.current.src = new URL(`${currentTrack.id}.mp3`, host).toString();
+      createMetadata(currentTrack);
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        dispatch(playNextSong());
+      });
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        dispatch(playPrevSong());
+      });
     }
   }, [currentTrack]);
 

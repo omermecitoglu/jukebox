@@ -28,7 +28,7 @@ const ListedSong = ({
   }, [song]);
 
   useEffect(() => {
-    if (isCached === false) {
+    if (process.env.NODE_ENV === "productionnn" && isCached === false) {
       fetch(`/${song.id}.mp3`).then(response => setIsCached(response.ok));
     }
   }, [isCached]);
