@@ -30,7 +30,7 @@ const DownloadSubscription = ({
     };
   }, [downloadId, socket]);
 
-  return <ProgressBar key={downloadId} animated now={percentage} />;
+  return <ProgressBar animated now={percentage} />;
 };
 
 export default DownloadSubscription;
