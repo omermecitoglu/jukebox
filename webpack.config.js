@@ -9,7 +9,7 @@ const path = require("path");
 const bundlePlugins = (mode) => {
   const plugins = [
     new HtmlWebpackPlugin({
-      title: "Jukebox",
+      template: "src/index.html",
     }),
     new MiniCssExtractPlugin({
       filename: "style.css",
