@@ -18,9 +18,12 @@ const ListedSong = ({
 
   useEffect(() => {
     (async () => {
-      const cache = await caches.open("v1");
-      const response = await cache.match(`/${song.id}.mp3`);
-      setIsCached(response?.ok === true);
+      const keys = await caches.keys();
+      if (keys.length) {
+        const cache = await caches.open(keys[0]);
+        const response = await cache.match(`/${song.id}.mp3`);
+        setIsCached(response?.ok === true);
+      }
     })();
   }, [song]);
 
