@@ -27,6 +27,10 @@ const player = createSlice({
       state.playlist = [];
       state.currentTrack = null;
     },
+    playPrevSong: state => {
+      const index = state.playlist.findIndex(t => t.id === state.currentTrack);
+      state.currentTrack = state.playlist[(state.playlist.length + (index - 1)) % state.playlist.length].id;
+    },
     playNextSong: state => {
       const index = state.playlist.findIndex(t => t.id === state.currentTrack);
       state.currentTrack = state.playlist[(index + 1) % state.playlist.length].id;
@@ -34,6 +38,6 @@ const player = createSlice({
   },
 });
 
-export const { startPlaying, stopPlaying, playNextSong } = player.actions;
+export const { startPlaying, stopPlaying, playPrevSong, playNextSong } = player.actions;
 
 export default player.reducer;
