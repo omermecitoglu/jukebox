@@ -38,7 +38,7 @@ async function getPlaylistItems(pageToken: string | null, playlistId: string, ac
 
 export async function getVideoIdsFromPlaylist(playlistId: string, accessToken: string): Promise<string[]> {
   const results = [];
-  let currentPageToken: string | null | undefined;
+  let currentPageToken: string | null | undefined = null;
   while (typeof currentPageToken !== "undefined") {
     const data = await getPlaylistItems(currentPageToken, playlistId, accessToken);
     for (const item of data.items) {

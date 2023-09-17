@@ -41,7 +41,7 @@ async function runQueue() {
         io.emit("music:download:subscription:remove", track);
       } else {
         await downloadYoutubeVideo(videoId);
-        console.log(videoId + " has been downloaded");
+        console.log(videoId + " has been downloaded. " + downloadQueue.length + " left.");
       }
     } catch (error) {
       console.error(error);
