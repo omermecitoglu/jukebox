@@ -1,5 +1,7 @@
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import React, { useEffect, useState } from "react";
+import { isMusicCached } from "~/core/cache";
+import { getHost } from "~/core/host";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import type { Song } from "~/redux/features/library";
 import CoolButton from "./CoolButton";
@@ -18,18 +20,14 @@ const ListedSong = ({
 
   useEffect(() => {
     (async () => {
-      const keys = await caches.keys();
-      if (keys.length) {
-        const cache = await caches.open(keys[0]);
-        const response = await cache.match(`/${song.id}.mp3`);
-        setIsCached(response?.ok === true);
-      }
+      setIsCached(await isMusicCached(song.id));
     })();
   }, [song]);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "productionnn" && isCached === false) {
-      fetch(`/${song.id}.mp3`).then(response => setIsCached(response.ok));
+    if (process.env.NODE_ENV === "production" && isCached === false) {
+      const url = new URL(`/${song.id}.mp3`, getHost());
+      fetch(url).then(response => setIsCached(response.ok));
     }
   }, [isCached]);
 
