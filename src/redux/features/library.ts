@@ -1,4 +1,5 @@
 import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { deleteMusicCache } from "~/core/cache";
 
 export type Song = {
   id: string,
@@ -25,6 +26,7 @@ const library = createSlice({
       state.songs = found ? state.songs : Array.from(new Set([...state.songs, action.payload]));
     },
     removeSong: (state, action: PayloadAction<string>) => {
+      deleteMusicCache(action.payload);
       state.songs = state.songs.filter(s => s.id !== action.payload);
     },
     addDownload: (state, action: PayloadAction<string>) => {
@@ -36,6 +38,6 @@ const library = createSlice({
   },
 });
 
-export const { addSong, addDownload, removeDownload } = library.actions;
+export const { addSong, removeSong, addDownload, removeDownload } = library.actions;
 
 export default library.reducer;

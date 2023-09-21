@@ -1,9 +1,11 @@
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
+import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import React, { useEffect, useState } from "react";
 import { isMusicCached } from "~/core/cache";
 import { getHost } from "~/core/host";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
-import type { Song } from "~/redux/features/library";
+import { type Song, removeSong } from "~/redux/features/library";
+import { useAppDispatch } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
 
 type ListedSongProps = {
@@ -15,6 +17,7 @@ const ListedSong = ({
   song,
   play,
 }: ListedSongProps) => {
+  const dispatch = useAppDispatch();
   const isOnline = useNavigatorOnLine();
   const [isCached, setIsCached] = useState<boolean | null>(null);
   const [isCaching, setIsCaching] = useState(false);
@@ -42,6 +45,11 @@ const ListedSong = ({
         {song.title}
         <br />
         <small className="text-muted">{song.artist}</small>
+      </td>
+      <td valign="middle">
+        {(isOnline || isCached) &&
+          <CoolButton icon={faTrash} onClick={() => dispatch(removeSong(song.id))} variant="danger" />
+        }
       </td>
       <td valign="middle">
         {(isOnline || isCached) &&
