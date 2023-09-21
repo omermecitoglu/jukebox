@@ -54,6 +54,7 @@ export function downloadYoutubeVideo(downloadsFolder: string, videoId: string): 
         id: data.videoId,
         artist: data.artist,
         title: data.title,
+        thumbnail: data.thumbnail,
       };
 
       saveRecord("track:" + data.videoId, JSON.stringify(track)).catch(console.error);
