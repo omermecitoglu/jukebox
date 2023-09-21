@@ -17,6 +17,7 @@ const ListedSong = ({
 }: ListedSongProps) => {
   const isOnline = useNavigatorOnLine();
   const [isCached, setIsCached] = useState<boolean | null>(null);
+  const [isCaching, setIsCaching] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -26,8 +27,12 @@ const ListedSong = ({
 
   useEffect(() => {
     if (process.env.NODE_ENV === "production" && isCached === false) {
+      setIsCaching(true);
       const url = new URL(`/${song.id}.mp3`, getHost());
-      fetch(url).then(response => setIsCached(response.ok));
+      fetch(url).then(response => {
+        setIsCaching(false);
+        setIsCached(response.status === 200);
+      });
     }
   }, [isCached]);
 
@@ -40,7 +45,7 @@ const ListedSong = ({
       </td>
       <td valign="middle">
         {(isOnline || isCached) &&
-          <CoolButton icon={faPlay} onClick={() => play(song.id)} variant={isCached ? "success" : "primary"} />
+          <CoolButton icon={faPlay} onClick={() => play(song.id)} variant={isCaching ? "warning" : (isCached ? "success" : "primary")} />
         }
       </td>
     </tr>

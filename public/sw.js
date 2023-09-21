@@ -32,6 +32,9 @@ self.addEventListener("fetch", (e) => {
         return r;
       }
       const response = await fetch(e.request);
+      if (e.request.method !== "GET" || /\/socket.io\//i.test(e.request.url)) {
+        return response;
+      }
       if (response.status !== 206) {
         const isMusic = /\.mp3$/i.test(e.request.url);
         const cache = await caches.open(isMusic ? "music" : appCacheName);
