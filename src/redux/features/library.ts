@@ -5,6 +5,7 @@ export type Song = {
   id: string,
   artist: string,
   title: string,
+  thumbnail: string,
 };
 
 interface LibraryState {

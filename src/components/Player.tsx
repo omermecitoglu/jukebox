@@ -89,8 +89,11 @@ const Player = () => {
     }
   };
 
+  const thumbnail = `https://i.ytimg.com/vi/${currentTrack?.id}/hqdefault.jpg`;
+
   return (
     <>
+      <img src={thumbnail} className="mw-100 mb-3" />
       <audio ref={audioPlayer} autoPlay={true} onEnded={nextSong} />
       <ProgressBar variant="danger" animated={isPlaying} now={currentTime} max={audioPlayer.current?.duration ?? 100} />
       <div className="mt-3 d-flex justify-content-between align-items-center">
