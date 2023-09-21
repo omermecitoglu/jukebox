@@ -1,5 +1,5 @@
+import { requestDownload } from "~/core/downloader";
 import io from "~/core/socket";
-import { requestDownload } from "~/core/youtube";
 
 io.on("connection", (socket) => {
   socket.on("music:download:request", async (input: string, youtubeToken: string | null) => {
