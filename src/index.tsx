@@ -17,9 +17,13 @@ if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
 }
 
 declare global {
-  interface Window { injectToken?: (hash: string) => void }
+  interface Window { injectToken?: (token: string) => void }
 }
 
 if (window.opener?.injectToken) {
-  window.opener.injectToken(window.location.hash);
+  const match = window.location.hash.match(/#access_token=([^&]+)&.*expires_in=(\d+)/);
+  if (match && match[1]) {
+    window.opener.injectToken(match[1]);
+    window.close();
+  }
 }

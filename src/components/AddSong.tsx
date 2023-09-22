@@ -37,24 +37,15 @@ const AddSong = ({
         toolbar: "no",
         menubar: "no",
       });
-      window.injectToken = (hash) => {
-        const match = hash.match(/#access_token=([^&]+)&.*expires_in=(\d+)/);
-        if (match && match[1]) {
-          dispatch(injectAccessToken(match[1]));
-        }
+      window.injectToken = (token) => {
+        dispatch(injectAccessToken(token));
+        window.injectToken = undefined;
       };
     } else {
       setYoutubeLink("");
       socket.emit("music:download:request", youtubeLink, accessToken);
     }
   };
-
-  useEffect(() => {
-    if (popup.current && accessToken) {
-      popup.current.close();
-      window.injectToken = undefined;
-    }
-  }, [accessToken]);
 
   useEffect(() => {
     const addSubscription = (downloadId: string) => {
