@@ -16,7 +16,7 @@ Before you begin, make sure you have the following software installed on your sy
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/omermecitoglu/jukebox-client
    cd jukebox-client
    ```
 
