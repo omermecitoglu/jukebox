@@ -52,3 +52,14 @@
 @import "~bootstrap/scss/utilities/api";
 
 // 8. Add additional custom code here
+
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+#app {
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
