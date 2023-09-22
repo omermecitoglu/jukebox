@@ -1,3 +1,5 @@
+![Jukebox Logo](/public/apple-icon-180x180.png)
+
 # Jukebox Client
 
 Welcome to the Jukebox Client project! This client-side application is designed to provide a seamless music listening experience. It uses React and Redux to manage the user interface and state, and it communicates with the Jukebox backend to access and control music playback. This README file will help you understand how to set up and use the client project.
