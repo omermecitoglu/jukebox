@@ -63,8 +63,8 @@ Here are some of the key dependencies used in this project:
 
 ## Additional Information
 
-The Jukebox Server is a crucial component of the Jukebox application. It works in conjunction with the Jukebox client to provide a seamless music streaming experience.
+The Jukebox Server is a crucial component of the Jukebox application. It works in conjunction with the [Jukebox client](https://github.com/omermecitoglu/jukebox-client/blob/main/README.md) to provide a seamless music streaming experience.
 
-If you have any questions or encounter any issues, please don't hesitate to reach out. For more information on setting up and running the Jukebox client, refer to the README file in the client project.
+If you have any questions or encounter any issues, please don't hesitate to reach out. For more information on setting up and running the [Jukebox client](https://github.com/omermecitoglu/jukebox-client/blob/main/README.md), refer to the README file in the client project.
 
 Thank you for using the Jukebox Server! We hope you enjoy building and using this music streaming service. 🎵🎧
