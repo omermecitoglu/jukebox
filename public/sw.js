@@ -6,10 +6,10 @@ const protectedCache = [
 ];
 
 const appShellFiles = [
-  // "/favicon.ico",
-  // "/index.html",
-  // "/index.js",
-  // "/style.css",
+  "/favicon.ico",
+  "/", // index.html
+  "/index.js",
+  "/style.css",
 ];
 
 self.addEventListener("install", (e) => {
