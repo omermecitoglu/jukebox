@@ -1,7 +1,5 @@
-import { createServer } from "node:http";
-import path from "path";
-import express from "express";
 import { Server } from "socket.io";
+import httpServer from "./express";
 import type { TrackData } from "./track";
 
 interface ServerToClientEvents {
@@ -14,23 +12,15 @@ interface ClientToServerEvents {
   "music:download:request": (input: string, youtubeToken: string | null) => void,
 }
 
-const app = express();
-const server = createServer(app);
-const io = new Server <ClientToServerEvents, ServerToClientEvents>(server, {
+const io = new Server <ClientToServerEvents, ServerToClientEvents>(httpServer, {
   cors: (process.env.NODE_ENV === "production") ? undefined : {
     origin: "http://localhost:7700",
   },
 });
 
-const clientFolder = path.join(process.cwd(), "../client/build");
-app.use(express.static(clientFolder));
-
-const downloadsFolder = path.join(process.cwd(), "downloads");
-app.use(express.static(downloadsFolder));
-
 const serverPort = process.env.NODE_ENV === "production" ? 7700 : 7701;
 
-server.listen(serverPort, () => {
+httpServer.listen(serverPort, () => {
   console.log("server running at http://localhost:" + serverPort);
 });
 
