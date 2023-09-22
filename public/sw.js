@@ -35,7 +35,7 @@ self.addEventListener("fetch", (e) => {
       if (e.request.method !== "GET" || /\/socket.io\//i.test(e.request.url)) {
         return response;
       }
-      if (response.status !== 206) {
+      if (response.status === 200) {
         const isMusic = /\.mp3$/i.test(e.request.url);
         const cache = await caches.open(isMusic ? "music" : appCacheName);
         // console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
