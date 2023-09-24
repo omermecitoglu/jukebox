@@ -28,6 +28,7 @@ type CoolButtonProps = {
   variant?: BootstrapColorVariant,
   size?: "xs" | "sm" | "lg" | "2x" | "3x" | "5x" | "7x" | "10x",
   onClick?: () => void,
+  disabled?: boolean,
 };
 
 const CoolButton = ({
@@ -36,8 +37,9 @@ const CoolButton = ({
   variant = "primary",
   size = "lg",
   onClick,
+  disabled = false,
 }: CoolButtonProps): React.JSX.Element => (
-  <Button variant={variant} onClick={onClick}>
+  <Button variant={variant} onClick={onClick} disabled={disabled}>
     <FontAwesomeIcon icon={icon} size={size} className="fa-fw" />
     {label && <span className="ms-2 me-4">{label}</span>}
   </Button>

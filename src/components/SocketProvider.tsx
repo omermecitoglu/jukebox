@@ -1,5 +1,6 @@
 import React, { type ReactNode, useEffect, useState } from "react";
 import { type JukeSocket, SocketContext, createConnection } from "~/core/socket";
+import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 
 type SocketProviderProps = {
   children: ReactNode,
@@ -8,16 +9,22 @@ type SocketProviderProps = {
 const SocketProvider = ({
   children,
 }: SocketProviderProps) => {
+  const isOnline = useNavigatorOnLine();
   const [socket, setSocket] = useState<JukeSocket | null>(null);
 
   useEffect(() => {
-    const connection = createConnection();
-    setSocket(connection);
+    let connection: JukeSocket | null = null;
+    if (isOnline) {
+      connection = createConnection();
+      setSocket(connection);
+    }
     return () => {
-      connection.disconnect();
-      setSocket(null);
+      if (connection) {
+        connection.disconnect();
+        setSocket(null);
+      }
     };
-  }, []);
+  }, [isOnline]);
 
   return (
     <SocketContext.Provider value={socket}>

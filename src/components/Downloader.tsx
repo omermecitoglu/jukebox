@@ -81,6 +81,7 @@ const Downloader = () => {
           label="Download"
           variant="success"
           onClick={submit}
+          disabled={!socket}
         />
         <CoolButton
           icon={faBroom}
