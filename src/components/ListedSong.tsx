@@ -57,6 +57,13 @@ const ListedSong = ({
     }
   };
 
+  const getPlayButtonColor = () => {
+    if (isCaching) return "warning";
+    if (isCached) return "success";
+    if (isOnline) return "primary";
+    return "secondary";
+  };
+
   return (
     <tr key={song.id}>
       <td>
@@ -65,22 +72,19 @@ const ListedSong = ({
         <small className="text-muted">{song.artist}</small>
       </td>
       <td valign="middle">
-        {(isOnline || isCached) &&
-          <CoolButton
-            variant="danger"
-            icon={faTrash}
-            onClick={() => dispatch(removeSong(song.id))}
-          />
-        }
+        <CoolButton
+          variant="danger"
+          icon={faTrash}
+          onClick={() => dispatch(removeSong(song.id))}
+        />
       </td>
       <td valign="middle">
-        {(isOnline || isCached) &&
-          <CoolButton
-            variant={isCaching ? "warning" : (isCached ? "success" : "primary")}
-            icon={song === currentTrack ? faPause : faPlay}
-            onClick={toggle}
-          />
-        }
+        <CoolButton
+          variant={getPlayButtonColor()}
+          icon={song === currentTrack ? faPause : faPlay}
+          onClick={toggle}
+          disabled={!isOnline && !isCached}
+        />
       </td>
     </tr>
   );
