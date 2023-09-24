@@ -13,10 +13,15 @@ import SocketProvider from "./SocketProvider";
 const App = () => {
   const isOnline = useNavigatorOnLine();
   const [adding, setAdding] = useState(false);
+  const isActivated = useAppSelector(state => state.app.active);
   const songs = useAppSelector(state => state.library.songs);
   const isPlaying = useAppSelector(state => state.player.isPlaying);
 
   const goBack = () => setAdding(false);
+
+  if (!isActivated) {
+    return <div>Loading...</div>;
+  }
 
   if (isPlaying) {
     return (

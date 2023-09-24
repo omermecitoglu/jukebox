@@ -29,15 +29,22 @@ const ListedSong = ({
   }, [song]);
 
   useEffect(() => {
-    if (process.env.NODE_ENV === "production" && isCached === false) {
+    const controller = new AbortController();
+    if (process.env.NODE_ENV === "production" && isCached === false && isOnline) {
       setIsCaching(true);
-      const url = new URL(`/${song.id}.mp3`, getHost());
-      fetch(url).then(response => {
-        setIsCaching(false);
-        setIsCached(response.status === 200);
-      });
+      setTimeout(() => {
+        const url = new URL(`/${song.id}.mp3`, getHost());
+        fetch(url, { signal: controller.signal }).then(response => {
+          setIsCached(response.status === 200);
+        }).catch(() => {
+          setIsCached(false);
+        }).finally(() => {
+          setIsCaching(false);
+        });
+      }, 1000);
     }
-  }, [isCached]);
+    return () => controller.abort();
+  }, [isCached, isOnline]);
 
   return (
     <tr key={song.id}>

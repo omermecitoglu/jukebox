@@ -10,12 +10,6 @@ document.body.appendChild(rootDiv);
 const root = createRoot(rootDiv);
 root.render(<ReduxProvider><App /></ReduxProvider>);
 
-if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-}
-
 declare global {
   interface Window { injectToken?: (token: string) => void }
 }
