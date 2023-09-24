@@ -10,6 +10,7 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
   "music:download:request": (input: string, youtubeToken: string | null) => void,
+  "music:download:subscribe": (videoIds: string[]) => void,
 }
 
 const io = new Server <ClientToServerEvents, ServerToClientEvents>(httpServer, {
