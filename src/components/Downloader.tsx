@@ -52,6 +52,7 @@ const Downloader = () => {
     };
 
     if (socket) {
+      socket.emit("music:download:subscribe", subscriptions);
       socket.on("music:download:subscription:add", addSubscription);
       socket.on("music:download:subscription:remove", removeSubscription);
     }

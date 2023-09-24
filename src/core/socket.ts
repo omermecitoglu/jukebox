@@ -11,6 +11,7 @@ interface ServerToClientEvents {
 
 interface ClientToServerEvents {
   "music:download:request": (input: string, youtubeToken: string | null) => void,
+  "music:download:subscribe": (videoIds: string[]) => void,
 }
 
 export function createConnection() {
