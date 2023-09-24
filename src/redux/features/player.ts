@@ -2,13 +2,11 @@ import { type PayloadAction, createSlice } from "@reduxjs/toolkit";
 import type { Song } from "./library";
 
 interface PlayerState {
-  isPlaying: boolean,
   playlist: Song[],
   currentTrack: Song | null,
 }
 
 const initialState: PlayerState = {
-  isPlaying: false,
   playlist: [],
   currentTrack: null,
 };
@@ -18,12 +16,10 @@ const player = createSlice({
   initialState,
   reducers: {
     startPlaying: (state, action: PayloadAction<{ playlist: Song[], trackId: string }>) => {
-      state.isPlaying = true;
       state.playlist = action.payload.playlist;
       state.currentTrack = action.payload.playlist.find(track => track.id === action.payload.trackId) ?? null;
     },
     stopPlaying: state => {
-      state.isPlaying = false;
       state.playlist = [];
       state.currentTrack = null;
     },

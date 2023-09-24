@@ -30,7 +30,12 @@ const DownloadSubscription = ({
     };
   }, [downloadId, socket]);
 
-  return <ProgressBar animated now={percentage} />;
+  return (
+    <div>
+      <div className="lh-sm">{downloadId}</div>
+      <ProgressBar animated now={percentage} className="border border-primary" />
+    </div>
+  );
 };
 
 export default DownloadSubscription;

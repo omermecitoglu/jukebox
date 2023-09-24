@@ -36,9 +36,12 @@ const library = createSlice({
     removeDownload: (state, action: PayloadAction<string>) => {
       state.downloads = state.downloads.filter(s => s !== action.payload);
     },
+    clearDownloads: state => {
+      state.downloads = [];
+    },
   },
 });
 
-export const { addSong, removeSong, addDownload, removeDownload } = library.actions;
+export const { addSong, removeSong, addDownload, removeDownload, clearDownloads } = library.actions;
 
 export default library.reducer;

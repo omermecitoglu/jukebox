@@ -1,3 +1,4 @@
+import { faPause } from "@fortawesome/free-solid-svg-icons/faPause";
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import React, { useEffect, useState } from "react";
@@ -5,7 +6,8 @@ import { isMusicCached } from "~/core/cache";
 import { getHost } from "~/core/host";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { type Song, removeSong } from "~/redux/features/library";
-import { useAppDispatch } from "~/redux/hooks";
+import { stopPlaying } from "~/redux/features/player";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
 
 type ListedSongProps = {
@@ -21,6 +23,7 @@ const ListedSong = ({
   const isOnline = useNavigatorOnLine();
   const [isCached, setIsCached] = useState<boolean | null>(null);
   const [isCaching, setIsCaching] = useState(false);
+  const currentTrack = useAppSelector(state => state.player.currentTrack);
 
   useEffect(() => {
     (async () => {
@@ -46,6 +49,14 @@ const ListedSong = ({
     return () => controller.abort();
   }, [isCached, isOnline]);
 
+  const toggle = () => {
+    if (song === currentTrack) {
+      dispatch(stopPlaying());
+    } else {
+      play(song.id);
+    }
+  };
+
   return (
     <tr key={song.id}>
       <td>
@@ -55,12 +66,20 @@ const ListedSong = ({
       </td>
       <td valign="middle">
         {(isOnline || isCached) &&
-          <CoolButton icon={faTrash} onClick={() => dispatch(removeSong(song.id))} variant="danger" />
+          <CoolButton
+            variant="danger"
+            icon={faTrash}
+            onClick={() => dispatch(removeSong(song.id))}
+          />
         }
       </td>
       <td valign="middle">
         {(isOnline || isCached) &&
-          <CoolButton icon={faPlay} onClick={() => play(song.id)} variant={isCaching ? "warning" : (isCached ? "success" : "primary")} />
+          <CoolButton
+            variant={isCaching ? "warning" : (isCached ? "success" : "primary")}
+            icon={song === currentTrack ? faPause : faPlay}
+            onClick={toggle}
+          />
         }
       </td>
     </tr>

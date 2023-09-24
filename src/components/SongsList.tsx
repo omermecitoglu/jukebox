@@ -6,10 +6,12 @@ import { useAppDispatch } from "~/redux/hooks";
 import ListedSong from "./ListedSong";
 
 type SongsListProps = {
+  title: string,
   collection: Song[],
 };
 
 const SongsList = ({
+  title,
   collection,
 }: SongsListProps) => {
   const dispatch = useAppDispatch();
@@ -21,10 +23,10 @@ const SongsList = ({
   };
 
   return (
-    <Table>
+    <Table className="mb-0">
       <thead>
         <tr>
-          <th>My Songs</th>
+          <th>{title}</th>
           <th>&nbsp;</th>
           <th>&nbsp;</th>
         </tr>

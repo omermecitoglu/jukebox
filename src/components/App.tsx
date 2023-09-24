@@ -1,62 +1,67 @@
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
-import { faMusic } from "@fortawesome/free-solid-svg-icons/faMusic";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Container from "react-bootstrap/Container";
-import AddSong from "~/components/AddSong";
-import CoolButton from "~/components/CoolButton";
-import SongsList from "~/components/SongsList";
-import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
-import { useAppSelector } from "~/redux/hooks";
+import { getHost } from "~/core/host";
+import { createMetadata } from "~/core/metadata";
+import { playNextSong, playPrevSong } from "~/redux/features/player";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
+import Downloader from "./Downloader";
+import Library from "./Library";
+import Navigator from "./Navigator";
 import Player from "./Player";
 import SocketProvider from "./SocketProvider";
 
 const App = () => {
-  const isOnline = useNavigatorOnLine();
-  const [adding, setAdding] = useState(false);
+  const audioPlayer = useRef<HTMLAudioElement>(null);
+  const [activeScreen, setActiveScreen] = useState("library");
   const isActivated = useAppSelector(state => state.app.active);
-  const songs = useAppSelector(state => state.library.songs);
-  const isPlaying = useAppSelector(state => state.player.isPlaying);
+  const accessToken = useAppSelector(state => state.user.accessToken);
+  const currentTrack = useAppSelector(state => state.player.currentTrack);
+  const dispatch = useAppDispatch();
 
-  const goBack = () => setAdding(false);
+  useEffect(() => {
+    const source = audioPlayer.current;
+    if (source && currentTrack) {
+      const url = new URL(`${currentTrack.id}.mp3`, getHost());
+      source.src = url.toString();
+      createMetadata(currentTrack);
+      navigator.mediaSession.setActionHandler("previoustrack", () => {
+        dispatch(playPrevSong());
+      });
+      navigator.mediaSession.setActionHandler("nexttrack", () => {
+        dispatch(playNextSong());
+      });
+    }
+  }, [currentTrack]);
+
+  const content = useMemo(() => {
+    switch (activeScreen) {
+      case "library": return <Library />;
+      case "playlists": return <div>TODO: add playlists feature</div>;
+      case "player": return audioPlayer.current && <Player source={audioPlayer.current} />;
+      case "downloader": return (
+        <SocketProvider>
+          <Downloader />
+        </SocketProvider>
+      );
+      case "settings": return <div>{accessToken}</div>;
+      default: return <div>Something went wrong.</div>;
+    }
+  }, [activeScreen]);
 
   if (!isActivated) {
     return <div>Loading...</div>;
   }
 
-  if (isPlaying) {
-    return (
-      <Container className="mt-3">
-        <Player />
-      </Container>
-    );
-  }
-
   return (
-    <Container className="mt-3">
-      {adding ? (
-        isOnline ? (
-          <SocketProvider>
-            <AddSong goBack={goBack} />
-          </SocketProvider>
-        ) : (
-          <div>
-            <p>You can't add songs in offline mode</p>
-            <div className="d-grid gap-3">
-              <CoolButton icon={faChevronLeft} label="Back" onClick={goBack} variant="secondary" />
-            </div>
-          </div>
-        )
-      ) : (
-        <div className="d-grid gap-3">
-          {isOnline &&
-            <div className="d-grid gap-3">
-              <CoolButton icon={faMusic} label="Add Song" onClick={() => setAdding(true)} />
-            </div>
-          }
-          <SongsList collection={songs} />
-        </div>
-      )}
-    </Container>
+    <>
+      {currentTrack &&
+        <audio ref={audioPlayer} autoPlay={true} onEnded={() => dispatch(playNextSong())} />
+      }
+      <Container as="main" className="flex-grow-1 py-3">
+        {content}
+      </Container>
+      <Navigator active={activeScreen} setActive={setActiveScreen} />
+    </>
   );
 };
 

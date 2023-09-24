@@ -1,27 +1,21 @@
-import { faChevronLeft } from "@fortawesome/free-solid-svg-icons/faChevronLeft";
+import { faBroom } from "@fortawesome/free-solid-svg-icons/faBroom";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { idealHeight, openCentered } from "~/core/open";
 import { SocketContext } from "~/core/socket";
 import { generateAuthUrl } from "~/core/youtube";
-import { type Song, addDownload, addSong, removeDownload } from "~/redux/features/library";
+import { type Song, addDownload, addSong, clearDownloads, removeDownload } from "~/redux/features/library";
 import { injectAccessToken } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
 import DownloadSubscription from "./DownloadSubscription";
 
-type AddSongProps = {
-  goBack: () => void,
-};
-
-const AddSong = ({
-  goBack,
-}: AddSongProps) => {
-  const socket = useContext(SocketContext);
-  const [youtubeLink, setYoutubeLink] = useState("");
+const Downloader = () => {
   const accessToken = useAppSelector(state => state.user.accessToken);
   const subscriptions = useAppSelector(state => state.library.downloads);
+  const [youtubeLink, setYoutubeLink] = useState("");
+  const socket = useContext(SocketContext);
   const dispatch = useAppDispatch();
   const popup = useRef<Window>();
 
@@ -71,26 +65,36 @@ const AddSong = ({
   }, [socket]);
 
   return (
-    <>
-      <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
-        <Form.Control
-          type="text"
-          placeholder="paste youtube link here"
-          value={youtubeLink}
-          onChange={e => setYoutubeLink(e.target.value)}
-        />
-      </Form.Group>
+    <div className="mh-100 d-flex flex-column gap-3">
       <div className="d-grid gap-3">
-        <CoolButton icon={faDownload} label="Download" onClick={submit} variant="success" />
-        <CoolButton icon={faChevronLeft} label="Back" onClick={goBack} variant="secondary" />
+        <Form.Group controlId="youtube-link">
+          <Form.Control
+            type="text"
+            placeholder="paste youtube link here"
+            value={youtubeLink}
+            onChange={e => setYoutubeLink(e.target.value)}
+          />
+        </Form.Group>
+        <CoolButton
+          icon={faDownload}
+          label="Download"
+          variant="success"
+          onClick={submit}
+        />
+        <CoolButton
+          icon={faBroom}
+          label="Clear"
+          variant="danger"
+          onClick={() => dispatch(clearDownloads())}
+        />
       </div>
-      <div className="d-grid gap-3 mt-3">
+      <div className="flex-shrink-1 overflow-hidden d-grid gap-1">
         {subscriptions.map(downloadId =>
           <DownloadSubscription key={downloadId} downloadId={downloadId} />
         )}
       </div>
-    </>
+    </div>
   );
 };
 
-export default AddSong;
+export default Downloader;
