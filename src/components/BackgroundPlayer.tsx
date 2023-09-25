@@ -5,17 +5,17 @@ import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 
 type BackgroundPlayerProps = {
-  ref: RefObject<HTMLAudioElement>,
+  audioRef: RefObject<HTMLAudioElement>,
 };
 
 const BackgroundPlayer = ({
-  ref,
+  audioRef,
 }: BackgroundPlayerProps) => {
   const dispatch = useAppDispatch();
   const currentTrack = useAppSelector(state => state.player.currentTrack);
 
   useEffect(() => {
-    const source = ref.current;
+    const source = audioRef.current;
     if (source && currentTrack) {
       const url = new URL(`${currentTrack.id}.mp3`, getHost());
       source.src = url.toString();
@@ -27,9 +27,9 @@ const BackgroundPlayer = ({
         dispatch(playNextSong());
       });
     }
-  }, [currentTrack]);
+  }, [audioRef, currentTrack]);
 
-  return <audio ref={ref} autoPlay={true} onEnded={() => dispatch(playNextSong())} />;
+  return <audio ref={audioRef} autoPlay={true} onEnded={() => dispatch(playNextSong())} />;
 };
 
 export default BackgroundPlayer;

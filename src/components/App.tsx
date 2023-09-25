@@ -38,7 +38,7 @@ const App = () => {
     <SocketProvider>
       <DownloadTracker />
       {currentTrack &&
-        <BackgroundPlayer ref={audioPlayer} />
+        <BackgroundPlayer audioRef={audioPlayer} />
       }
       <main className="flex-grow-1">
         <Container as="section" className="py-3">

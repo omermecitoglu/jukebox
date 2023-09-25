@@ -27,8 +27,9 @@ const SongsList = ({
       <thead>
         <tr>
           <th>{title}</th>
-          <th>&nbsp;</th>
-          <th>&nbsp;</th>
+          <th colSpan={2} className="text-muted text-end">
+            <small>{collection.length} songs</small>
+          </th>
         </tr>
       </thead>
       <tbody>
