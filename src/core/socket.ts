@@ -4,7 +4,7 @@ import type { TrackData } from "./track";
 
 interface ServerToClientEvents {
   "music:download:subscription:add": (videoId: string) => void,
-  "music:download:subscription:remove": (track: TrackData) => void,
+  "music:download:complete": (track: TrackData) => void,
   "music:download:subscription:progress": (videoId: string, percentage: number) => void,
 }
 

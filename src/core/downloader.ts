@@ -63,7 +63,7 @@ async function runQueue() {
           throw new Error("Track is downloaded but its metadata is missing! " + videoId);
         }
         const track: TrackData = JSON.parse(rawData);
-        io.emit("music:download:subscription:remove", track);
+        io.emit("music:download:complete", track);
       } else {
         await downloadYoutubeVideo(downloadsFolder, videoId);
         console.log(videoId + " has been downloaded. " + downloadQueue.length + " left.");

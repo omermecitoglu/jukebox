@@ -61,7 +61,7 @@ export function downloadYoutubeVideo(downloadsFolder: string, videoId: string): 
 
         saveRecord("track:" + data.videoId, JSON.stringify(track)).catch(console.error);
 
-        io.emit("music:download:subscription:remove", track);
+        io.emit("music:download:complete", track);
       });
     });
 
