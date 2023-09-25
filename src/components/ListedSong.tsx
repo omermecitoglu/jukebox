@@ -1,9 +1,7 @@
 import { faPause } from "@fortawesome/free-solid-svg-icons/faPause";
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
-import React, { useEffect, useState } from "react";
-import { isMusicCached } from "~/core/cache";
-import { getHost } from "~/core/host";
+import React from "react";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { type Song, removeSong } from "~/redux/features/library";
 import { stopPlaying } from "~/redux/features/player";
@@ -21,33 +19,11 @@ const ListedSong = ({
 }: ListedSongProps) => {
   const dispatch = useAppDispatch();
   const isOnline = useNavigatorOnLine();
-  const [isCached, setIsCached] = useState<boolean | null>(null);
-  const [isCaching, setIsCaching] = useState(false);
   const currentTrack = useAppSelector(state => state.player.currentTrack);
-
-  useEffect(() => {
-    (async () => {
-      setIsCached(await isMusicCached(song.id));
-    })();
-  }, [song]);
-
-  useEffect(() => {
-    const controller = new AbortController();
-    if (process.env.NODE_ENV === "production" && isCached === false && isOnline) {
-      setIsCaching(true);
-      setTimeout(() => {
-        const url = new URL(`/${song.id}.mp3`, getHost());
-        fetch(url, { signal: controller.signal }).then(response => {
-          setIsCached(response.status === 200);
-        }).catch(() => {
-          setIsCached(false);
-        }).finally(() => {
-          setIsCaching(false);
-        });
-      }, 1000);
-    }
-    return () => controller.abort();
-  }, [isCached, isOnline]);
+  const prospectSong = useAppSelector(state => state.app.prospectSong);
+  const cachedSongs = useAppSelector(state => state.app.cachedSongs);
+  const isCached = cachedSongs.includes(song.id);
+  const isCaching = song.id === prospectSong;
 
   const toggle = () => {
     if (song === currentTrack) {

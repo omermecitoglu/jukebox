@@ -24,7 +24,7 @@ const library = createSlice({
   reducers: {
     addSong: (state, action: PayloadAction<Song>) => {
       const found = state.songs.find(s => s.id === action.payload.id);
-      state.songs = found ? state.songs : Array.from(new Set([...state.songs, action.payload]));
+      state.songs = found ? state.songs : [...state.songs, action.payload];
     },
     removeSong: (state, action: PayloadAction<string>) => {
       deleteMusicCache(action.payload);

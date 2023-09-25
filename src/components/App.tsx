@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Container from "react-bootstrap/Container";
+import { cacheNextMusic, getCachedMusicList } from "~/core/cache";
 import { getHost } from "~/core/host";
 import { createMetadata } from "~/core/metadata";
+import { addCachedSongs, cacheSong } from "~/redux/features/app";
 import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import Downloader from "./Downloader";
@@ -15,6 +17,9 @@ const App = () => {
   const [activeScreen, setActiveScreen] = useState("library");
   const isActivated = useAppSelector(state => state.app.active);
   const accessToken = useAppSelector(state => state.user.accessToken);
+  const songs = useAppSelector(state => state.library.songs);
+  const cachedSongs = useAppSelector(state => state.app.cachedSongs);
+  const cacheLoaded = useAppSelector(state => state.app.cacheLoaded);
   const currentTrack = useAppSelector(state => state.player.currentTrack);
   const dispatch = useAppDispatch();
 
@@ -48,6 +53,23 @@ const App = () => {
     }
   }, [activeScreen]);
 
+  useEffect(() => {
+    getCachedMusicList().then(list => dispatch(addCachedSongs(list)));
+  }, []);
+
+  useEffect(() => {
+    if (!cacheLoaded) return;
+    const controller = new AbortController();
+    cacheNextMusic({
+      trackIds: songs.map(s => s.id),
+      cache: cachedSongs,
+      signal: controller.signal,
+      markProspect: trackId => dispatch(cacheSong(trackId)),
+      resolve: trackId => dispatch(addCachedSongs([trackId])),
+    });
+    return () => controller.abort();
+  }, [cacheLoaded, songs, cachedSongs]);
+
   if (!isActivated) {
     return <div>Loading...</div>;
   }
@@ -57,9 +79,11 @@ const App = () => {
       {currentTrack &&
         <audio ref={audioPlayer} autoPlay={true} onEnded={() => dispatch(playNextSong())} />
       }
-      <Container as="main" className="flex-grow-1 py-3">
-        {content}
-      </Container>
+      <main className="flex-grow-1">
+        <Container as="section" className="py-3">
+          {content}
+        </Container>
+      </main>
       <Navigator active={activeScreen} setActive={setActiveScreen} />
     </>
   );
