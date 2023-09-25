@@ -10,6 +10,16 @@ import type { TrackData } from "./track";
 const downloadsFolder = path.join(process.cwd(), "downloads");
 const downloadQueue: string[] = [];
 
+export async function makeSureDownloadsFolderExists() {
+  const targetPath = path.join(downloadsFolder, "thumbnails");
+  try {
+    await fs.access(targetPath);
+  } catch {
+    console.log("creating downloads folder...");
+    await fs.mkdir(targetPath, { recursive: true });
+  }
+}
+
 async function checkSongExists(videoId: string) {
   try {
     await fs.access(path.join(downloadsFolder, videoId + ".mp3"));

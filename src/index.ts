@@ -1,4 +1,4 @@
-import { requestDownload } from "~/core/downloader";
+import { makeSureDownloadsFolderExists, requestDownload } from "~/core/downloader";
 import io from "~/core/socket";
 
 io.on("connection", (socket) => {
@@ -17,3 +17,5 @@ io.on("connection", (socket) => {
     }
   });
 });
+
+makeSureDownloadsFolderExists();

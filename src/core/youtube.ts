@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "path";
+import fetch from "node-fetch";
 import YoutubeMp3Downloader from "youtube-mp3-downloader";
 import { saveRecord } from "./db";
 import io from "./socket";
@@ -48,18 +49,20 @@ export function downloadYoutubeVideo(downloadsFolder: string, videoId: string): 
       fs.rename(data.file, path.join(downloadsFolder, videoId + ".mp3"))
         .catch(err => console.error(`Error renaming file: ${err}`));
 
-      resolve(data);
+      downloadThumbnail(videoId, downloadsFolder).then(thumbnail => {
+        resolve(data);
 
-      const track: TrackData = {
-        id: data.videoId,
-        artist: data.artist,
-        title: data.title,
-        thumbnail: data.thumbnail,
-      };
+        const track: TrackData = {
+          id: data.videoId,
+          artist: data.artist,
+          title: data.title,
+          thumbnail: thumbnail,
+        };
 
-      saveRecord("track:" + data.videoId, JSON.stringify(track)).catch(console.error);
+        saveRecord("track:" + data.videoId, JSON.stringify(track)).catch(console.error);
 
-      io.emit("music:download:subscription:remove", track);
+        io.emit("music:download:subscription:remove", track);
+      });
     });
 
     downloader.on("error", function(error) {
@@ -70,4 +73,15 @@ export function downloadYoutubeVideo(downloadsFolder: string, videoId: string): 
       io.to("download:subscriber:" + data.videoId).emit("music:download:subscription:progress", data.videoId, data.progress.percentage);
     });
   });
+}
+
+async function downloadThumbnail(videoId: string, downloadsFolder: string) {
+  const response = await fetch(`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`);
+  if (!response.ok) {
+    throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  const buffer = await response.arrayBuffer();
+  const thumbnailPath = path.join(downloadsFolder, "thumbnails", videoId + ".jpg");
+  await fs.writeFile(thumbnailPath, Buffer.from(buffer));
+  return `/thumbnails/${videoId}.jpg`;
 }
