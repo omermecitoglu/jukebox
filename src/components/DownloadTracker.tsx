@@ -17,10 +17,10 @@ const DownloadTracker = () => {
       sendNotification("Download Complete", song.title + " has been downloaded.");
     };
 
-    socket.on("music:download:subscription:remove", handleCompletedDownload);
+    socket.on("music:download:complete", handleCompletedDownload);
 
     return () => {
-      socket.off("music:download:subscription:remove", handleCompletedDownload);
+      socket.off("music:download:complete", handleCompletedDownload);
     };
   }, [socket]);
 
