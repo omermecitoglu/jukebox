@@ -1,9 +1,10 @@
 import type { Song } from "~/redux/features/library";
+import { fixTitle } from "./title";
 
 export function createMetadata(track: Song) {
   if ("mediaSession" in navigator) {
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: track.title,
+      title: fixTitle(track.title),
       artist: track.artist,
       artwork: [
         {
