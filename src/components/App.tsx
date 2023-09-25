@@ -9,6 +9,7 @@ import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import Downloader from "./Downloader";
 import Library from "./Library";
+import Loading from "./Loading";
 import Navigator from "./Navigator";
 import Player from "./Player";
 import SocketProvider from "./SocketProvider";
@@ -73,7 +74,7 @@ const App = () => {
   }, [isOnline, cacheLoaded, songs, cachedSongs]);
 
   if (!isActivated) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
