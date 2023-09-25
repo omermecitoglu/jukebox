@@ -69,3 +69,20 @@ main {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+table {
+  & .ellipsis {
+    & > div {
+      display: table;
+      table-layout: fixed;
+      width: 100%;
+
+      & > span {
+        display: table-cell;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}

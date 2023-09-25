@@ -2,6 +2,7 @@ import { faPause } from "@fortawesome/free-solid-svg-icons/faPause";
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import { faTrash } from "@fortawesome/free-solid-svg-icons/faTrash";
 import React from "react";
+import { fixTitle } from "~/core/title";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { type Song, removeSong } from "~/redux/features/library";
 import { stopPlaying } from "~/redux/features/player";
@@ -42,10 +43,14 @@ const ListedSong = ({
 
   return (
     <tr key={song.id}>
-      <td>
-        {song.title}
-        <br />
-        <small className="text-muted">{song.artist}</small>
+      <td className="ellipsis" valign="middle">
+        <div>
+          <span className="lh-sm">
+            <span className="fw-bold">{fixTitle(song.title)}</span>
+            <br />
+            <small className="text-muted">{song.artist}</small>
+          </span>
+        </div>
       </td>
       <td valign="middle">
         <CoolButton

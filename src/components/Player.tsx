@@ -4,6 +4,7 @@ import { faPause } from "@fortawesome/free-solid-svg-icons/faPause";
 import { faPlay } from "@fortawesome/free-solid-svg-icons/faPlay";
 import React, { useEffect, useState } from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
+import { fixTitle } from "~/core/title";
 import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
@@ -70,7 +71,7 @@ const Player = ({
   return (
     <>
       <h4 className="text-truncate">
-        {currentTrack.title}
+        {fixTitle(currentTrack.title)}
       </h4>
       <h6 className="text-truncate text-muted">
         {currentTrack.artist}
