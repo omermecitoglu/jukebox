@@ -76,7 +76,7 @@ const Player = ({
         {currentTrack.artist}
       </h6>
       <img
-        src={`https://i.ytimg.com/vi/${currentTrack.id}/hqdefault.jpg`}
+        src={currentTrack.thumbnail}
         className="mw-100 mb-3"
       />
       <ProgressBar

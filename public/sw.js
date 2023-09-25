@@ -34,11 +34,9 @@ const appShellFiles = [
 ];
 
 self.addEventListener("install", (e) => {
-  // console.log("[Service Worker] Install");
   e.waitUntil(
     (async () => {
       const cache = await caches.open(appCacheName);
-      // console.log("[Service Worker] Caching all: app shell and content");
       await cache.addAll(appShellFiles);
     })(),
   );
@@ -56,30 +54,48 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    (async () => {
-      const r = await caches.match(e.request);
-      // console.log(`[Service Worker] Fetching resource: ${e.request.url}`);
-      if (r) {
-        return r;
-      }
-      const response = await fetch(e.request);
-      if (e.request.method !== "GET" || /\/socket.io\//i.test(e.request.url)) {
-        return response;
-      }
-      if (response.status === 200) {
-        const isMusic = /\.mp3$/i.test(e.request.url);
-        const cache = await caches.open(isMusic ? "music" : appCacheName);
-        // console.log(`[Service Worker] Caching new resource: ${e.request.url}`);
-        const cloneRequest = new Request(e.request, {
-          headers: {
-            ...e.request.headers,
-            Range: "bytes=0-",
-          },
-        });
-        await cache.put(cloneRequest, response.clone());
-      }
-      return response;
-    })(),
-  );
+  e.respondWith(handleRequests(e.request));
 });
+
+async function handleRequests(request) {
+  const cachedResponse = await caches.match(request);
+  if (cachedResponse) return cachedResponse;
+
+  const response = await fetch(request);
+  const isCacheable = isResourceCacheable(request, response);
+  if (isCacheable) {
+    const cacheStorage = getCacheStorage(request.url);
+    const cache = await caches.open(cacheStorage);
+    await cache.put(fixHeaders(cacheStorage, request), response.clone());
+  }
+  return response;
+}
+
+function isResourceCacheable(request, response) {
+  if (request.method !== "GET") return false;
+  if (/\/socket.io\//i.test(request.url)) return false;
+  if (response.status !== 200) return false;
+  return true;
+}
+
+function getCacheStorage(url) {
+  if (/\/thumbnails\/(.*?)(\.jpg)$$/.test(url)) {
+    return "thumbnails";
+  }
+  if (/\.mp3$/i.test(url)) {
+    return "music";
+  }
+  return appCacheName;
+}
+
+function fixHeaders(storage, request) {
+  if (storage === "music") {
+    return new Request(request, {
+      headers: {
+        ...request.headers,
+        Range: "bytes=0-",
+      },
+    })
+  }
+  return request;
+}

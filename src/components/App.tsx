@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import { cacheNextMusic, getCachedMusicList } from "~/core/cache";
 import { getHost } from "~/core/host";
 import { createMetadata } from "~/core/metadata";
+import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { addCachedSongs, cacheSong } from "~/redux/features/app";
 import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
@@ -13,6 +14,7 @@ import Player from "./Player";
 import SocketProvider from "./SocketProvider";
 
 const App = () => {
+  const isOnline = useNavigatorOnLine();
   const audioPlayer = useRef<HTMLAudioElement>(null);
   const [activeScreen, setActiveScreen] = useState("library");
   const isActivated = useAppSelector(state => state.app.active);
@@ -58,7 +60,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!cacheLoaded) return;
+    if (!isOnline || !cacheLoaded) return;
     const controller = new AbortController();
     cacheNextMusic({
       trackIds: songs.map(s => s.id),
@@ -68,7 +70,7 @@ const App = () => {
       resolve: trackId => dispatch(addCachedSongs([trackId])),
     });
     return () => controller.abort();
-  }, [cacheLoaded, songs, cachedSongs]);
+  }, [isOnline, cacheLoaded, songs, cachedSongs]);
 
   if (!isActivated) {
     return <div>Loading...</div>;

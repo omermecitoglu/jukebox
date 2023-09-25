@@ -18,6 +18,7 @@ export async function cacheNextMusic({
   const uncachedTrackId = trackIds.find(t => !cache.includes(t));
   if (uncachedTrackId) {
     markProspect(uncachedTrackId);
+    await cacheThumbnail(uncachedTrackId, signal);
     const success = await cacheMusic(uncachedTrackId, signal);
     if (success) resolve(uncachedTrackId);
     markProspect(null);
@@ -27,6 +28,16 @@ export async function cacheNextMusic({
 async function cacheMusic(trackId: string, signal: AbortSignal) {
   try {
     const url = new URL(`/${trackId}.mp3`, getHost());
+    const response = await fetch(url, { signal });
+    return response.status === 200;
+  } catch {
+    return false;
+  }
+}
+
+async function cacheThumbnail(trackId: string, signal: AbortSignal) {
+  try {
+    const url = new URL(`/thumbnails/${trackId}.jpg`, getHost());
     const response = await fetch(url, { signal });
     return response.status === 200;
   } catch {

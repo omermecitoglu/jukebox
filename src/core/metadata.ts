@@ -7,7 +7,7 @@ export function createMetadata(track: Song) {
       artist: track.artist,
       artwork: [
         {
-          src: `https://i.ytimg.com/vi/${track.id}/hqdefault.jpg`,
+          src: track.thumbnail,
           sizes: "480x360",
           type: "image/png",
         },
