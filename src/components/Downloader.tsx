@@ -48,7 +48,6 @@ const Downloader = () => {
       dispatch(addDownload(downloadId));
     };
 
-    socket.emit("music:download:subscribe", subscriptions);
     socket.on("music:download:subscription:add", addSubscription);
 
     return () => {
