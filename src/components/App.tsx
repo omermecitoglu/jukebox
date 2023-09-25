@@ -3,6 +3,7 @@ import Container from "react-bootstrap/Container";
 import { useCacheResolver } from "~/hooks/useCacheResolver";
 import { useAppSelector } from "~/redux/hooks";
 import BackgroundPlayer from "./BackgroundPlayer";
+import DownloadTracker from "./DownloadTracker";
 import Downloader from "./Downloader";
 import Library from "./Library";
 import Loading from "./Loading";
@@ -35,6 +36,7 @@ const App = () => {
 
   return (
     <SocketProvider>
+      <DownloadTracker />
       {currentTrack &&
         <BackgroundPlayer ref={audioPlayer} />
       }

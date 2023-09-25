@@ -2,11 +2,10 @@ import { faBroom } from "@fortawesome/free-solid-svg-icons/faBroom";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
-import { sendNotification } from "~/core/notifications";
 import { idealHeight, openCentered } from "~/core/open";
 import { SocketContext } from "~/core/socket";
 import { generateAuthUrl } from "~/core/youtube";
-import { type Song, addDownload, addSong, clearDownloads, removeDownload } from "~/redux/features/library";
+import { addDownload, clearDownloads } from "~/redux/features/library";
 import { injectAccessToken } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
@@ -43,27 +42,17 @@ const Downloader = () => {
   };
 
   useEffect(() => {
+    if (!socket) return;
+
     const addSubscription = (downloadId: string) => {
       dispatch(addDownload(downloadId));
     };
 
-    const removeSubscription = (song: Song) => {
-      dispatch(addSong(song));
-      dispatch(removeDownload(song.id));
-      sendNotification("Download Complete", song.title + " has been downloaded.");
-    };
-
-    if (socket) {
-      socket.emit("music:download:subscribe", subscriptions);
-      socket.on("music:download:subscription:add", addSubscription);
-      socket.on("music:download:subscription:remove", removeSubscription);
-    }
+    socket.emit("music:download:subscribe", subscriptions);
+    socket.on("music:download:subscription:add", addSubscription);
 
     return () => {
-      if (socket) {
-        socket.off("music:download:subscription:add", addSubscription);
-        socket.off("music:download:subscription:remove", removeSubscription);
-      }
+      socket.off("music:download:subscription:add", addSubscription);
     };
   }, [socket]);
 
