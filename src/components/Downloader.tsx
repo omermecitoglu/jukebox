@@ -2,6 +2,7 @@ import { faBroom } from "@fortawesome/free-solid-svg-icons/faBroom";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
+import { sendNotification } from "~/core/notifications";
 import { idealHeight, openCentered } from "~/core/open";
 import { SocketContext } from "~/core/socket";
 import { generateAuthUrl } from "~/core/youtube";
@@ -49,6 +50,7 @@ const Downloader = () => {
     const removeSubscription = (song: Song) => {
       dispatch(addSong(song));
       dispatch(removeDownload(song.id));
+      sendNotification("Download Complete", song.title + " has been downloaded.");
     };
 
     if (socket) {
