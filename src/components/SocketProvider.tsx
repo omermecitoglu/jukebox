@@ -13,16 +13,12 @@ const SocketProvider = ({
   const [socket, setSocket] = useState<JukeSocket | null>(null);
 
   useEffect(() => {
-    let connection: JukeSocket | null = null;
-    if (isOnline) {
-      connection = createConnection();
-      setSocket(connection);
-    }
+    if (!isOnline) return;
+    const connection = createConnection();
+    setSocket(connection);
     return () => {
-      if (connection) {
-        connection.disconnect();
-        setSocket(null);
-      }
+      connection.disconnect();
+      setSocket(null);
     };
   }, [isOnline]);
 
