@@ -87,6 +87,9 @@ function getCacheStorage(url) {
   if (/\.mp3$/i.test(url)) {
     return "music";
   }
+  if (appShellFiles.includes(new URL(url).pathname)) {
+    return appCacheName;
+  }
   return "others";
 }
 
