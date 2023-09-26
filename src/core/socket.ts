@@ -1,11 +1,12 @@
 import { Server } from "socket.io";
 import httpServer from "./express";
-import type { TrackData } from "./track";
+import type { TrackData } from "./youtube/track";
 
 interface ServerToClientEvents {
   "music:download:subscription:add": (videoId: string) => void,
-  "music:download:complete": (track: TrackData) => void,
   "music:download:subscription:progress": (videoId: string, percentage: number) => void,
+  "music:download:finish": (track: TrackData) => void,
+  "music:download:cancel": (videoId: string) => void,
 }
 
 interface ClientToServerEvents {

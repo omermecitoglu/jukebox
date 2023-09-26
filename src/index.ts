@@ -1,4 +1,4 @@
-import { makeSureDownloadsFolderExists, requestDownload } from "~/core/downloader";
+import { makeSureDownloadsFolderExists, requestDownload, runQueue } from "~/core/downloader";
 import io from "~/core/socket";
 
 io.on("connection", (socket) => {
@@ -18,4 +18,7 @@ io.on("connection", (socket) => {
   });
 });
 
-makeSureDownloadsFolderExists();
+(async () => {
+  await makeSureDownloadsFolderExists();
+  runQueue();
+})();
