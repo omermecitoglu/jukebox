@@ -12,17 +12,23 @@ const DownloadTracker = () => {
   useEffect(() => {
     if (!socket) return;
 
-    const handleCompletedDownload = (song: Song) => {
+    const handleFinishedDownload = (song: Song) => {
       dispatch(removeDownload(song.id));
       dispatch(addSong(song));
       sendNotification("Download Complete", song.title + " has been downloaded.");
     };
 
+    const handleCancelledDownload = (videoId: string) => {
+      dispatch(removeDownload(videoId));
+    };
+
     socket.emit("music:download:subscribe", subscriptions);
-    socket.on("music:download:complete", handleCompletedDownload);
+    socket.on("music:download:finish", handleFinishedDownload);
+    socket.on("music:download:cancel", handleCancelledDownload);
 
     return () => {
-      socket.off("music:download:complete", handleCompletedDownload);
+      socket.off("music:download:finish", handleFinishedDownload);
+      socket.off("music:download:cancel", handleCancelledDownload);
     };
   }, [socket]);
 

@@ -4,9 +4,10 @@ import type { Song } from "~/redux/features/library";
 import { getHost } from "./host";
 
 interface ServerToClientEvents {
-  "music:download:complete": (song: Song) => void,
   "music:download:subscription:add": (videoId: string) => void,
   "music:download:subscription:progress": (videoId: string, percentage: number) => void,
+  "music:download:finish": (song: Song) => void,
+  "music:download:cancel": (videoId: string) => void,
 }
 
 interface ClientToServerEvents {
