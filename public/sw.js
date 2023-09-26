@@ -1,8 +1,10 @@
-const appCacheName = "v2";
+const appCacheName = "v1";
 
 const protectedCache = [
   appCacheName,
   "music",
+  "thumbnails",
+  "others",
 ];
 
 const appShellFiles = [
@@ -85,7 +87,7 @@ function getCacheStorage(url) {
   if (/\.mp3$/i.test(url)) {
     return "music";
   }
-  return appCacheName;
+  return "others";
 }
 
 function fixHeaders(storage, request) {

@@ -20,6 +20,7 @@ const DownloadTracker = () => {
 
     const handleCancelledDownload = (videoId: string) => {
       dispatch(removeDownload(videoId));
+      sendNotification("Download Error", "This video is too long!");
     };
 
     socket.emit("music:download:subscribe", subscriptions);
