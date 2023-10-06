@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "prebuild": "ts-unused-exports tsconfig.json --excludePathsFromReport='app;.'",
-    "postbuild": "generate-service-worker --entry src/sw.js",
+    "postbuild": "generate-service-worker --entry src/sw.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
     "dev": "next dev",
@@ -26,7 +26,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.5.4",
-    "@omermecitoglu/generate-service-worker": "^1.0.1",
+    "@omermecitoglu/generate-service-worker": "^1.1.3",
     "@types/node": "20.8.2",
     "@types/react": "18.2.25",
     "@typescript-eslint/eslint-plugin": "^6.7.4",

@@ -1,3 +1,13 @@
+// eslint-disable-next-line spaced-comment
+/// <reference lib="webworker" />
+declare const self: ServiceWorkerGlobalScope;
+declare const clients: Clients;
+declare global {
+  const BUILD_ID: string;
+  const STATIC_FILES: string[];
+}
+export {};
+
 const appCacheName = BUILD_ID;
 
 const protectedCache = [
@@ -33,7 +43,7 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(handleRequests(e.request));
 });
 
-async function handleRequests(request) {
+async function handleRequests(request: Request) {
   const cachedResponse = await caches.match(request);
   if (cachedResponse) return cachedResponse;
 
@@ -47,14 +57,14 @@ async function handleRequests(request) {
   return response;
 }
 
-function isResourceCacheable(request, response) {
+function isResourceCacheable(request: Request, response: Response) {
   if (request.method !== "GET") return false;
   if (/\/socket.io\//i.test(request.url)) return false;
   if (response.status !== 200) return false;
   return true;
 }
 
-function getCacheStorage(url) {
+function getCacheStorage(url: string) {
   if (/\/thumbnails\/(.*?)(\.jpg)$$/.test(url)) {
     return "thumbnails";
   }
@@ -67,14 +77,14 @@ function getCacheStorage(url) {
   return "others";
 }
 
-function fixHeaders(storage, request) {
+function fixHeaders(storage: string, request: Request) {
   if (storage === "music") {
     return new Request(request, {
       headers: {
         ...request.headers,
         Range: "bytes=0-",
       },
-    })
+    });
   }
   return request;
 }
