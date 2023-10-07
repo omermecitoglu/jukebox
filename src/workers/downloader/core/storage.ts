@@ -1,4 +1,3 @@
-import "server-only";
 import fs from "node:fs/promises";
 import path from "path";
 
@@ -12,5 +11,15 @@ export async function isDownloaded(file: string) {
     return true;
   } catch {
     return false;
+  }
+}
+
+export async function makeSureDownloadsFolderExists() {
+  const targetPath = path.join(getDownloadsPath(), "thumbnails");
+  try {
+    await fs.access(targetPath);
+  } catch {
+    console.log("creating downloads folder...");
+    await fs.mkdir(targetPath, { recursive: true });
   }
 }

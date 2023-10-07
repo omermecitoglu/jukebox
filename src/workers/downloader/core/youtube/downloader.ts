@@ -29,16 +29,13 @@ export function downloadMp3FromYoutube(
     downloader.download(videoId, videoId + ".mp3");
 
     downloader.on("finished", function(err, data: FinishedDownloadData) {
-      console.log("finished");
       if (err) return reject(err);
       resolve(data);
     });
     downloader.on("error", function(error) {
-      console.log("error");
       reject(error);
     });
     downloader.on("progress", function(data) {
-      console.log("progress", data.progress.percentage);
       onProgress(data.progress.percentage);
     });
   });

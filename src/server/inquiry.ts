@@ -2,6 +2,8 @@ import "server-only";
 import type { Song } from "~/redux/features/library";
 import { isBlacklisted } from "~/server/blacklist";
 import { isDownloaded } from "~/server/storage";
+import { requestDownload } from "~/workers/downloader/api";
+import { getRecords } from "./db";
 
 type InquiryStatus = "downloaded" | "downloading" | "unavailable";
 
@@ -22,18 +24,17 @@ async function inquire(videoId: string): Promise<InquiryResult> {
     };
   }
   if (await isDownloaded(videoId + ".mp3")) {
-    return {
-      videoId,
-      status: "downloaded",
-      track: {
-        id: "5",
-        title: "anan",
-        artist: "x",
-        thumbnail: "y",
-      },
-    };
+    const records = await getRecords(`track:${videoId}`);
+    const trackData = records[`track:${videoId}`];
+    if (trackData) {
+      return {
+        videoId,
+        status: "downloaded",
+        track: JSON.parse(trackData),
+      };
+    }
   }
-  // download
+  requestDownload(videoId);
   return {
     videoId,
     status: "downloading",
