@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
 import thunk from "redux-thunk";
 import appReducer from "./features/app";
 import libraryReducer from "./features/library";
 import playerReducer from "./features/player";
 import userReducer from "./features/user";
+import storage from "./storage";
 
 const persistConfig = {
   key: "jukebox",
