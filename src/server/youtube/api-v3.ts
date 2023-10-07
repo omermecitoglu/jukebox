@@ -1,4 +1,4 @@
-import fetch from "node-fetch";
+import "server-only";
 
 type PlayListItem = {
   snippet: {
