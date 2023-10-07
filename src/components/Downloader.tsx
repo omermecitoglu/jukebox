@@ -11,6 +11,12 @@ import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import CoolButton from "./CoolButton";
 import DownloadSubscription from "./DownloadSubscription";
 
+declare global {
+  interface Window {
+    injectToken?: (token: string) => void,
+  }
+}
+
 const Downloader = () => {
   const accessToken = useAppSelector(state => state.user.accessToken);
   const subscriptions = useAppSelector(state => state.library.downloads);
