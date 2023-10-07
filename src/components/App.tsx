@@ -1,3 +1,4 @@
+"use client";
 import React, { useMemo, useRef, useState } from "react";
 import Container from "react-bootstrap/Container";
 import { useCacheResolver } from "~/hooks/useCacheResolver";
