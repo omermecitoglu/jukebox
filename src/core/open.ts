@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import "client-only";
 
 type FeatureOption = "yes" | "no" | 1 | 0;
 

@@ -1,3 +1,5 @@
+import "client-only";
+
 export function fixTitle(title: string) {
   const blacklist = ["official", "original", "lyric", "video"];
   const pattern = blacklist.join("|");

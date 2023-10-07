@@ -1,3 +1,5 @@
+import "client-only";
+
 export function generateAuthUrl(clientID: string) {
   const url = new URL("/o/oauth2/auth", "https://accounts.google.com");
   url.searchParams.set("client_id", clientID);

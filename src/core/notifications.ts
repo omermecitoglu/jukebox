@@ -1,3 +1,5 @@
+import "client-only";
+
 function showNotification(title: string, content: string, registration: ServiceWorkerRegistration) {
   const options = {
     icon: "/android-icon-192x192.png",

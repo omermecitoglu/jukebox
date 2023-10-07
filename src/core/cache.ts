@@ -1,3 +1,4 @@
+import "client-only";
 import { getHost } from "./host";
 
 type CacheRunnerParams = {

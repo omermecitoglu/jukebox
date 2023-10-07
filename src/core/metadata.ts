@@ -1,3 +1,4 @@
+import "client-only";
 import type { Song } from "~/redux/features/library";
 import { fixTitle } from "./title";
 
