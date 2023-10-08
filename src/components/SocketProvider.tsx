@@ -9,18 +9,19 @@ type SocketProviderProps = {
 const SocketProvider = ({
   children,
 }: SocketProviderProps) => {
+  const [dead, setDead] = useState(true);
   const isOnline = useNavigatorOnLine();
   const [socket, setSocket] = useState<JukeSocket | null>(null);
 
   useEffect(() => {
-    if (!isOnline) return;
+    if (!isOnline || dead) return;
     const connection = createConnection();
     setSocket(connection);
     return () => {
       connection.disconnect();
       setSocket(null);
     };
-  }, [isOnline]);
+  }, [isOnline, dead]);
 
   return (
     <SocketContext.Provider value={socket}>
