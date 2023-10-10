@@ -8,9 +8,14 @@ export type Song = {
   thumbnail: string,
 };
 
+export type Download = {
+  videoId: string,
+  progress: number,
+};
+
 interface LibraryState {
   songs: Song[],
-  downloads: string[],
+  downloads: Download[],
 }
 
 const initialState: LibraryState = {
@@ -31,10 +36,14 @@ const library = createSlice({
       state.songs = state.songs.filter(s => s.id !== action.payload);
     },
     addDownload: (state, action: PayloadAction<string>) => {
-      state.downloads = Array.from(new Set([...state.downloads, action.payload]));
+      const found = state.downloads.find(d => d.videoId === action.payload);
+      state.downloads = found ? state.downloads : [...state.downloads, { videoId: action.payload, progress: 0 }];
     },
     removeDownload: (state, action: PayloadAction<string>) => {
-      state.downloads = state.downloads.filter(s => s !== action.payload);
+      state.downloads = state.downloads.filter(d => d.videoId !== action.payload);
+    },
+    updateDownloadProgress: (state, action: PayloadAction<Download>) => {
+      state.downloads = state.downloads.map(d => d.videoId === action.payload.videoId ? action.payload : d);
     },
     clearDownloads: state => {
       state.downloads = [];
@@ -42,6 +51,6 @@ const library = createSlice({
   },
 });
 
-export const { addSong, removeSong, addDownload, removeDownload, clearDownloads } = library.actions;
+export const { addSong, removeSong, addDownload, removeDownload, updateDownloadProgress, clearDownloads } = library.actions;
 
 export default library.reducer;

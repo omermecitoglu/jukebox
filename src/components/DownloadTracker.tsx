@@ -1,35 +1,42 @@
 import React, { useContext, useEffect } from "react";
 import { sendNotification } from "~/core/notifications";
 import { SocketContext } from "~/core/socket";
-import { type Song, addSong, removeDownload } from "~/redux/features/library";
-import { useAppDispatch, useAppSelector } from "~/redux/hooks";
+import { type Song, addSong, removeDownload, updateDownloadProgress } from "~/redux/features/library";
+import { useAppDispatch } from "~/redux/hooks";
 
 const DownloadTracker = () => {
   const socket = useContext(SocketContext);
-  const subscriptions = useAppSelector(state => state.library.downloads);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!socket) return;
 
-    const handleFinishedDownload = (song: Song) => {
-      dispatch(removeDownload(song.id));
-      dispatch(addSong(song));
-      sendNotification("Download Complete", song.title + " has been downloaded.");
+    const handleProgress = (videoId: string, percentage: number) => {
+      dispatch(updateDownloadProgress({
+        videoId,
+        progress: percentage,
+      }));
     };
 
-    const handleCancelledDownload = (videoId: string) => {
+    const handleFinish = (track: Song) => {
+      dispatch(removeDownload(track.id));
+      dispatch(addSong(track));
+      sendNotification("Download Complete", track.title + " has been downloaded.");
+    };
+
+    const handleCancel = (videoId: string) => {
       dispatch(removeDownload(videoId));
       sendNotification("Download Error", "This video is too long!");
     };
 
-    socket.emit("music:download:subscribe", subscriptions);
-    socket.on("music:download:finish", handleFinishedDownload);
-    socket.on("music:download:cancel", handleCancelledDownload);
+    socket.on("music:download:progress", handleProgress);
+    socket.on("music:download:finish", handleFinish);
+    socket.on("music:download:cancel", handleCancel);
 
     return () => {
-      socket.off("music:download:finish", handleFinishedDownload);
-      socket.off("music:download:cancel", handleCancelledDownload);
+      socket.off("music:download:progress", handleProgress);
+      socket.off("music:download:finish", handleFinish);
+      socket.off("music:download:cancel", handleCancel);
     };
   }, [socket]);
 

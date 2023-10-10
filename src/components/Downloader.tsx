@@ -102,8 +102,8 @@ const Downloader = () => {
         />
       </div>
       <div className="flex-shrink-1 overflow-hidden d-grid gap-1">
-        {subscriptions.map(downloadId =>
-          <DownloadSubscription key={downloadId} downloadId={downloadId} />
+        {subscriptions.map(download =>
+          <DownloadSubscription key={download.videoId} download={download} />
         )}
       </div>
     </div>
