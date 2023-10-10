@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "downloader": "tsx src/workers/downloader/index.ts",
-    "prebuild": "ts-unused-exports tsconfig.json --excludePathsFromReport='app;.'",
+    "prebuild": "ts-unused-exports tsconfig.json --excludePathsFromReport='next.config;app;pages;db'",
     "postbuild": "generate-service-worker --entry src/sw.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -31,6 +31,7 @@
     "react-redux": "^8.1.3",
     "redis": "^4.6.10",
     "redux-persist": "^6.0.0",
+    "socket.io": "^4.7.2",
     "socket.io-client": "^4.7.2",
     "youtube-mp3-downloader": "^0.7.11"
   },
