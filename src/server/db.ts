@@ -2,7 +2,9 @@ import "server-only";
 import { type RedisClientType, createClient } from "redis";
 
 async function callClient(operation: (client: RedisClientType) => Promise<unknown>) {
-  const client = createClient();
+  const host = process.env.REDIS_HOST || "localhost";
+  const port = parseInt(process.env.REDIS_PORT!) || 6379;
+  const client = createClient({ url: `redis://${host}:${port}` });
   client.on("error", err => console.error("Redis Client Error", err));
   await client.connect();
   await operation(client as RedisClientType);

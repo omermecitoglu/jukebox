@@ -7,5 +7,5 @@ export type DownloadData = null;
 const queue = new Queue<DownloadData>("Download", { connection });
 
 export async function requestDownload(videoId: string) {
-  queue.add(videoId, null);
+  queue.add(videoId, null, { jobId: videoId });
 }

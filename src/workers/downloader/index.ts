@@ -5,7 +5,7 @@ import { getDownloadsPath, makeSureDownloadsFolderExists } from "./core/storage"
 import { downloadTrack } from "./core/youtube";
 import type { DownloadData } from "./api";
 
-const redis = new Redis();
+const redis = new Redis(connection.port, connection.host);
 
 const worker = new Worker<DownloadData>("Download", async job => {
   return await downloadTrack(job.name, getDownloadsPath(), job.updateProgress.bind(job));
@@ -19,10 +19,6 @@ const worker = new Worker<DownloadData>("Download", async job => {
   console.log("the worker has started running.");
   worker.run();
 })();
-
-worker.on("progress", (job, progress) => {
-  console.log(job.name, progress);
-});
 
 worker.on("completed", (job, track) => {
   redis.set("track:" + job.name, JSON.stringify(track));
