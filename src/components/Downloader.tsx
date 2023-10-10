@@ -53,7 +53,7 @@ const Downloader = () => {
     setYoutubeLink("");
     setInquiring(true);
     try {
-      const response = await apiGet<InquiryResult[]>("/inquire",
+      const response = await apiGet<InquiryResult[]>("inquire",
         accessToken ? { youtubeLink, accessToken } : { youtubeLink });
       if (!response.success) {
         return alert(response.error.message);

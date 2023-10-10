@@ -7,7 +7,7 @@ import type { DownloadData } from "./api";
 
 const redis = new Redis(connection.port, connection.host);
 
-const worker = new Worker<DownloadData>("Download", async job => {
+const worker = new Worker<DownloadData>("music:download", async job => {
   return await downloadTrack(job.name, getDownloadsPath(), job.updateProgress.bind(job));
 }, {
   connection,
