@@ -21,7 +21,7 @@ const worker = new Worker<DownloadData>("Download", async job => {
 })();
 
 worker.on("progress", (job, progress) => {
-  redis.set("download:progress:" + job.name, JSON.stringify(progress));
+  console.log(job.name, progress);
 });
 
 worker.on("completed", (job, track) => {
