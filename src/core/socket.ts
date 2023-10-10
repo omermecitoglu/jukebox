@@ -18,7 +18,7 @@ interface ClientToServerEvents {
 }
 
 export function createConnection() {
-  return io(getHost());
+  return io();
 }
 
 export type JukeSocket = Socket<ServerToClientEvents, ClientToServerEvents>;

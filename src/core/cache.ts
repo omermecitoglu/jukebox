@@ -1,5 +1,4 @@
 import "client-only";
-import { getHost } from "./host";
 
 type CacheRunnerParams = {
   trackIds: string[],
@@ -28,7 +27,7 @@ export async function cacheNextMusic({
 
 async function cacheMusic(trackId: string, signal: AbortSignal) {
   try {
-    const url = new URL(`/${trackId}.mp3`, getHost());
+    const url = new URL(`/${trackId}.mp3`, window.location.origin);
     const response = await fetch(url, { signal });
     return response.status === 200;
   } catch {
@@ -38,7 +37,7 @@ async function cacheMusic(trackId: string, signal: AbortSignal) {
 
 async function cacheThumbnail(trackId: string, signal: AbortSignal) {
   try {
-    const url = new URL(`/thumbnails/${trackId}.jpg`, getHost());
+    const url = new URL(`/thumbnails/${trackId}.jpg`, window.location.origin);
     const response = await fetch(url, { signal });
     return response.status === 200;
   } catch {
@@ -46,16 +45,9 @@ async function cacheThumbnail(trackId: string, signal: AbortSignal) {
   }
 }
 
-/* export async function isMusicCached(trackId: string) {
-  const cache = await caches.open("music");
-  const url = new URL(`/${trackId}.mp3`, getHost());
-  const response = await cache.match(url);
-  return response?.ok === true;
-} */
-
 export async function deleteMusicCache(trackId: string) {
   const cache = await caches.open("music");
-  const url = new URL(`/${trackId}.mp3`, getHost());
+  const url = new URL(`/${trackId}.mp3`, window.location.origin);
   return await cache.delete(url);
 }
 

@@ -1,5 +1,4 @@
 import React, { type RefObject, useEffect } from "react";
-import { getHost } from "~/core/host";
 import { createMetadata } from "~/core/metadata";
 import { playNextSong, playPrevSong } from "~/redux/features/player";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
@@ -17,7 +16,7 @@ const BackgroundPlayer = ({
   useEffect(() => {
     const source = audioRef.current;
     if (source && currentTrack) {
-      const url = new URL(`${currentTrack.id}.mp3`, getHost());
+      const url = new URL(`${currentTrack.id}.mp3`, window.location.origin);
       source.src = url.toString();
       createMetadata(currentTrack);
       navigator.mediaSession.setActionHandler("previoustrack", () => {
