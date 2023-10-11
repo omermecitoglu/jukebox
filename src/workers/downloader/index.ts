@@ -1,14 +1,29 @@
-import { Worker } from "bullmq";
-import Redis from "ioredis";
+import { UnrecoverableError, Worker } from "bullmq";
 import connection from "./core/connection";
+import { addToList } from "./core/db";
 import { getDownloadsPath, makeSureDownloadsFolderExists } from "./core/storage";
-import { downloadTrack } from "./core/youtube";
+import { fetchTrack } from "./core/track";
 import type { DownloadData } from "./api";
 
-const redis = new Redis(connection.port, connection.host);
-
 const worker = new Worker<DownloadData>("music:download", async job => {
-  return await downloadTrack(job.name, getDownloadsPath(), job.updateProgress.bind(job));
+  try {
+    const track = await fetchTrack(job.name, getDownloadsPath(), p => job.updateProgress(p));
+    return JSON.stringify(track);
+  } catch (error) {
+    if (error instanceof Error && error.message.endsWith("is too long!")) {
+      // video is too long. skip!
+      addToList("blacklist", job.name);
+      throw new UnrecoverableError("Unrecoverable");
+    }
+    if (typeof error === "string" && error.includes("ffmpeg exited with code 1:")) {
+      // ffmpeg error. skip!
+      addToList("blacklist", job.name);
+      throw new UnrecoverableError("Unrecoverable");
+    }
+    console.log("Exception!!!");
+    console.error(error);
+    throw error;
+  }
 }, {
   connection,
   autorun: false,
@@ -20,32 +35,7 @@ const worker = new Worker<DownloadData>("music:download", async job => {
   worker.run();
 })();
 
-worker.on("completed", (job, track) => {
-  redis.set("track:" + job.name, JSON.stringify(track));
-});
-
-worker.on("failed", (job, error: unknown) => {
-  console.log("failed");
-  if (!job) {
-    console.log("???");
-    console.error(error);
-  } else if (error instanceof Error && error.message.endsWith("is too long!")) {
-    // video is too long. skip!
-    redis.sadd("blacklist", [job.name]);
-  } else if (typeof error === "string" && error.includes("ffmpeg exited with code 1:")) {
-    // ffmpeg error. skip!
-    redis.sadd("blacklist", [job.name]);
-  } else {
-    console.log("!!!");
-    console.error(error);
-  }
-});
-
-worker.on("error", err => {
-  console.log("errored");
-  // log the error
-  console.error(err);
-});
+worker.on("error", console.error);
 
 let isShuttingDown = false;
 const gracefulShutdown = async (code: NodeJS.Signals) => {

@@ -11,5 +11,11 @@ export default function createSocketServer(server: number) {
       io.emit("music:download:progress", jobId, data);
     }
   });
+  queueEvents.on("completed", ({ returnvalue }) => {
+    io.emit("music:download:finish", JSON.parse(returnvalue));
+  });
+  queueEvents.on("retries-exhausted", ({ jobId }) => {
+    io.emit("music:download:cancel", jobId);
+  });
   return io;
 }
