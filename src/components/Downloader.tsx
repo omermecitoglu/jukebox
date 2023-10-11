@@ -93,6 +93,7 @@ const Downloader = () => {
           variant="success"
           onClick={submit}
           disabled={!isOnline || inquiring}
+          spinning={inquiring}
         />
         <CoolButton
           icon={faBroom}
