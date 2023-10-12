@@ -29,5 +29,16 @@ services:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - worker
+  ngrok:
+    image: ngrok/ngrok:latest
+    command:
+      - "start"
+      - "--all"
+      - "--config"
+      - "/etc/ngrok.yml"
+    volumes:
+      - ./ngrok.yml:/etc/ngrok.yml
+    depends_on:
+      - nginx
 volumes:
   database:
