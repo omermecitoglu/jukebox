@@ -18,7 +18,13 @@ const DownloadTracker = () => {
     return () => {
       socket.off("connect", init);
     };
-  }, [socket, subscriptions]);
+  }, [socket]);
+
+  useEffect(() => {
+    if (socket?.connected) {
+      socket.emit("subscribe", subscriptions.map(s => s.videoId));
+    }
+  }, [subscriptions]);
 
   useEffect(() => {
     if (!socket) return;
