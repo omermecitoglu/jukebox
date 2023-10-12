@@ -2,8 +2,8 @@ import "server-only";
 import type { Song } from "~/redux/features/library";
 import { isBlacklisted } from "~/server/blacklist";
 import { isDownloaded } from "~/server/storage";
-import { requestDownload } from "~/workers/downloader/api";
 import { getRecords } from "./db";
+import { requestDownload } from "./downloader";
 
 type InquiryStatus = "downloaded" | "downloading" | "unavailable";
 

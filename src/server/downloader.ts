@@ -1,6 +1,6 @@
 import "server-only";
 import { Queue } from "bullmq";
-import connection from "./core/connection";
+import connection from "../workers/downloader/core/connection";
 
 export type DownloadData = null;
 

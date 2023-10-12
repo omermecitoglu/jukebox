@@ -3,7 +3,7 @@ import connection from "./core/connection";
 import { addToList } from "./core/db";
 import { getDownloadsPath, makeSureDownloadsFolderExists } from "./core/storage";
 import { fetchTrack } from "./core/track";
-import type { DownloadData } from "./api";
+import type { DownloadData } from "../../server/downloader";
 
 const worker = new Worker<DownloadData>("music:download", async job => {
   try {
