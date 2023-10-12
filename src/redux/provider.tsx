@@ -14,10 +14,12 @@ const ReduxProvider = ({
   useEffect(() => {
     if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
       navigator.serviceWorker.register("/sw.js")
+        .then(() => fetch("/api/socket"))
         .then(() => store.dispatch(activate()))
         .catch(console.error);
     } else {
-      store.dispatch(activate());
+      fetch("/api/socket")
+        .then(() => store.dispatch(activate()));
     }
   }, []);
 

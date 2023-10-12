@@ -2,6 +2,8 @@ import { failResponse, successResponse } from "~/app/api/response";
 import { getVideoIds } from "~/server/youtube/videoId";
 import { type InquiryResult, inquireBulk } from "../../../server/inquiry";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);

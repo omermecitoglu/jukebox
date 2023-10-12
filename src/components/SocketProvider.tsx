@@ -14,7 +14,6 @@ const SocketProvider = ({
 
   useEffect(() => {
     if (!isOnline) return;
-    fetch("/api/socket");
     const connection = createConnection();
     setSocket(connection);
     return () => {

@@ -66,6 +66,7 @@
 			"warn",
 			{ "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
 		],
+    "@next/next/no-img-element": "off",
     "no-duplicate-imports": "error",
     "arrow-spacing": ["warn", { "before": true, "after": true }],
     "brace-style": ["error", "1tbs"],
