@@ -10,7 +10,7 @@ export interface ServerToClientEvents {
 }
 
 export interface ClientToServerEvents {
-  "dummy": () => void,
+  "subscribe": (subscriptions: string[]) => void,
 }
 
 export function createConnection() {

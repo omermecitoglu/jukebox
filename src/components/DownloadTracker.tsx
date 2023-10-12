@@ -2,11 +2,23 @@ import React, { useContext, useEffect } from "react";
 import { sendNotification } from "~/core/notifications";
 import { SocketContext } from "~/core/socket";
 import { type Song, addSong, removeDownload, updateDownloadProgress } from "~/redux/features/library";
-import { useAppDispatch } from "~/redux/hooks";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 
 const DownloadTracker = () => {
   const socket = useContext(SocketContext);
+  const subscriptions = useAppSelector(state => state.library.downloads);
   const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (!socket) return;
+    const init = () => {
+      socket.emit("subscribe", subscriptions.map(s => s.videoId));
+    };
+    socket.on("connect", init);
+    return () => {
+      socket.off("connect", init);
+    };
+  }, [socket, subscriptions]);
 
   useEffect(() => {
     if (!socket) return;

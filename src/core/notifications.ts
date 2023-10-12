@@ -14,7 +14,7 @@ function showNotification(title: string, content: string, registration: ServiceW
 
 export async function sendNotification(title: string, content: string) {
   const registration = await navigator.serviceWorker.getRegistration();
-  if (!registration) throw new Error("something went wrong");
+  if (!registration) return;
 
   if (Notification.permission === "granted") {
     showNotification(title, content, registration);
