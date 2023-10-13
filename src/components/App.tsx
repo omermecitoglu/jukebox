@@ -10,7 +10,6 @@ import Library from "./Library";
 import Loading from "./Loading";
 import Navigator from "./Navigator";
 import Player from "./Player";
-import SocketProvider from "./SocketProvider";
 
 const App = () => {
   const audioPlayer = useRef<HTMLAudioElement>(null);
@@ -36,7 +35,7 @@ const App = () => {
   }
 
   return (
-    <SocketProvider>
+    <>
       <DownloadTracker />
       {currentTrack &&
         <BackgroundPlayer audioRef={audioPlayer} />
@@ -47,7 +46,7 @@ const App = () => {
         </Container>
       </main>
       <Navigator active={activeScreen} setActive={setActiveScreen} />
-    </SocketProvider>
+    </>
   );
 };
 

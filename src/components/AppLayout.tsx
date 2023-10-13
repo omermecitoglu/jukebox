@@ -3,8 +3,7 @@ import "~/styles/custom-bootstrap.scss";
 import "@fortawesome/fontawesome-svg-core/styles.css";
 import { config } from "@fortawesome/fontawesome-svg-core";
 import React, { type ReactNode, useEffect } from "react";
-import ReduxProvider from "~/redux/provider";
-import Updater from "./Updater";
+import Providers from "./Providers";
 
 config.autoAddCss = false;
 
@@ -25,14 +24,7 @@ const AppLayout = ({
     }
   }, []);
 
-  return (
-    <ReduxProvider>
-      <Updater />
-      <div id="app">
-        {children}
-      </div>
-    </ReduxProvider>
-  );
+  return <Providers><div id="app">{children}</div></Providers>;
 };
 
 export default AppLayout;
