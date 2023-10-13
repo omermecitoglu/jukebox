@@ -24,6 +24,7 @@ self.addEventListener("install", (e) => {
     (async () => {
       const cache = await caches.open(appCacheName);
       await cache.addAll(appShellFiles);
+      await self.skipWaiting();
     })(),
   );
 });
@@ -40,6 +41,8 @@ self.addEventListener("activate", (e) => {
 });
 
 self.addEventListener("fetch", (e) => {
+  const isCacheable = isRequestCacheable(e.request);
+  if (!isCacheable) return;
   e.respondWith(handleRequests(e.request));
 });
 
@@ -48,8 +51,7 @@ async function handleRequests(request: Request) {
   if (cachedResponse) return cachedResponse;
 
   const response = await fetch(request);
-  const isCacheable = isResourceCacheable(request, response);
-  if (isCacheable) {
+  if (response.status === 200) {
     const cacheStorage = getCacheStorage(request.url);
     const cache = await caches.open(cacheStorage);
     await cache.put(fixHeaders(cacheStorage, request), response.clone());
@@ -57,10 +59,10 @@ async function handleRequests(request: Request) {
   return response;
 }
 
-function isResourceCacheable(request: Request, response: Response) {
+function isRequestCacheable(request: Request) {
   if (request.method !== "GET") return false;
-  if (/\/socket.io\//i.test(request.url)) return false;
-  if (response.status !== 200) return false;
+  if (/\/socket\.io\//i.test(request.url)) return false;
+  if (/\/api\//i.test(request.url)) return false;
   return true;
 }
 

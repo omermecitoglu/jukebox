@@ -1,6 +1,7 @@
 import React, { type ReactNode, useEffect } from "react";
 import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { activate } from "./features/app";
 import { persistor, store } from "./store";
 
@@ -11,16 +12,30 @@ type ReduxProviderProps = {
 const ReduxProvider = ({
   children,
 }: ReduxProviderProps) => {
+  const isOnline = useNavigatorOnLine();
   useEffect(() => {
-    if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js")
-        .then(() => fetch("/api/socket"))
-        .then(() => store.dispatch(activate()))
-        .catch(console.error);
-    } else {
-      fetch("/api/socket")
-        .then(() => store.dispatch(activate()));
-    }
+    (async () => {
+      try {
+        if (process.env.NODE_ENV === "production" && "serviceWorker" in navigator) {
+          const registration = await navigator.serviceWorker.register("/sw.js");
+          registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            if (!newWorker) return;
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed") {
+                alert("Application has been updated!");
+                window.location.reload();
+              }
+            });
+          });
+        }
+        if (isOnline) {
+          await fetch("/api/socket");
+        }
+      } finally {
+        store.dispatch(activate());
+      }
+    })();
   }, []);
 
   return (

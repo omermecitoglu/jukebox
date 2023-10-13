@@ -90,7 +90,7 @@ const Downloader = () => {
         <CoolButton
           icon={faDownload}
           label="Download"
-          variant="success"
+          variant={isOnline ? "success" : "secondary"}
           onClick={submit}
           disabled={!isOnline || inquiring}
           spinning={inquiring}

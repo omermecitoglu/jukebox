@@ -1,8 +1,8 @@
 {
   "private": true,
-  "name": "ts-next-bootstrap-fontawesome",
+  "name": "jukebox",
   "version": "1.0.0",
-  "description": "Typescript Next.js Bootstrap FontAwesome Template",
+  "description": "a React application is designed to provide a seamless music listening experience",
   "type": "module",
   "scripts": {
     "downloader": "tsx src/workers/downloader/index.ts",
@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@next/eslint-plugin-next": "^13.5.4",
-    "@omermecitoglu/generate-service-worker": "^1.1.3",
+    "@omermecitoglu/generate-service-worker": "^1.2.1",
     "@types/node": "20.8.2",
     "@types/react": "18.2.25",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
