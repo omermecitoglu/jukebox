@@ -7,7 +7,7 @@ import { idealHeight, openCentered } from "~/core/open";
 import { generateAuthUrl } from "~/core/youtube";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { addDownload, addSong, clearDownloads } from "~/redux/features/library";
-import { injectAccessToken } from "~/redux/features/user";
+import { deleteAccessToken, injectAccessToken } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import type { InquiryResult } from "~/server/inquiry";
 import { getPlaylistId } from "~/utils/youtube";
@@ -16,13 +16,14 @@ import DownloadSubscription from "./DownloadSubscription";
 
 declare global {
   interface Window {
-    injectToken?: (token: string) => void,
+    injectToken?: (token: string, expires_in: number) => void,
   }
 }
 
 const Downloader = () => {
   const isOnline = useNavigatorOnLine();
   const accessToken = useAppSelector(state => state.user.accessToken);
+  const accessTokenExpiration = useAppSelector(state => state.user.accessTokenExpiration);
   const subscriptions = useAppSelector(state => state.library.downloads);
   const [inquiring, setInquiring] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState("");
@@ -30,7 +31,7 @@ const Downloader = () => {
   const popup = useRef<Window>();
 
   const authenticate = () => {
-    const url = generateAuthUrl("69846603813-nq3tculv936hmsgtrdq2n3hbg7p1fe05.apps.googleusercontent.com");
+    const url = generateAuthUrl();
     popup.current = openCentered(url, "_blank", 600, idealHeight(), {
       popup: "yes",
       titlebar: "no",
@@ -38,15 +39,22 @@ const Downloader = () => {
       toolbar: "no",
       menubar: "no",
     });
-    window.injectToken = (token) => {
-      dispatch(injectAccessToken(token));
+    window.injectToken = (token, expires_in) => {
+      dispatch(injectAccessToken({
+        accessToken: token,
+        accessTokenExpiration: Date.now() + (expires_in * 1000),
+      }));
       window.injectToken = undefined;
     };
   };
 
   const submit = async () => {
+    const expired = (accessTokenExpiration || Infinity) < Date.now();
+    if (expired) {
+      dispatch(deleteAccessToken());
+    }
     const isPlaylist = getPlaylistId(youtubeLink) !== null;
-    if (isPlaylist && !accessToken) {
+    if (isPlaylist && (!accessToken || expired)) {
       return authenticate();
     }
 

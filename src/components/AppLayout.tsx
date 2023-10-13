@@ -18,7 +18,7 @@ const AppLayout = ({
     if (window.opener?.injectToken) {
       const match = window.location.hash.match(/#access_token=([^&]+)&.*expires_in=(\d+)/);
       if (match && match[1]) {
-        window.opener.injectToken(match[1]);
+        window.opener.injectToken(match[1], parseInt(match[2]));
         window.close();
       }
     }
