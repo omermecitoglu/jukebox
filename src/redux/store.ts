@@ -1,4 +1,4 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { type Reducer, configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/dist/query";
 import { persistReducer, persistStore } from "redux-persist";
 import thunk from "redux-thunk";
@@ -8,16 +8,15 @@ import playerReducer from "./features/player";
 import userReducer from "./features/user";
 import storage from "./storage";
 
-const persistConfig = {
-  key: "jukebox",
-  storage,
-};
+function persisted<T>(key: string, reducer: Reducer<T>) {
+  return persistReducer<T>({ key: "jukebox:" + key, storage }, reducer);
+}
 
 export const store = configureStore({
   reducer: {
     app: appReducer,
-    user: persistReducer(persistConfig, userReducer),
-    library: persistReducer(persistConfig, libraryReducer),
+    user: persisted("user", userReducer),
+    library: persisted("library", libraryReducer),
     player: playerReducer,
   },
   devTools: process.env.NODE_ENV !== "production",
