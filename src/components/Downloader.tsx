@@ -4,10 +4,10 @@ import React, { useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
 import { apiGet } from "~/app/api/fetch";
 import { idealHeight, openCentered } from "~/core/open";
-import { generateAuthUrl } from "~/core/youtube";
+import { generateAuthUrl, getUserInfo } from "~/core/youtube";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { addDownload, addSong, clearDownloads } from "~/redux/features/library";
-import { deleteAccessToken, injectAccessToken } from "~/redux/features/user";
+import { deleteAccessToken, injectAccessToken, injectUserProfile } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 import type { InquiryResult } from "~/server/inquiry";
 import { getPlaylistId } from "~/utils/youtube";
@@ -39,12 +39,21 @@ const Downloader = () => {
       toolbar: "no",
       menubar: "no",
     });
-    window.injectToken = (token, expires_in) => {
-      dispatch(injectAccessToken({
-        accessToken: token,
-        accessTokenExpiration: Date.now() + (expires_in * 1000),
-      }));
-      window.injectToken = undefined;
+    window.injectToken = async (token, expires_in) => {
+      try {
+        const snippet = await getUserInfo(token);
+        dispatch(injectUserProfile({
+          picture: snippet.items[0].snippet.thumbnails.default.url,
+          name: snippet.items[0].snippet.title,
+          tag: snippet.items[0].snippet.customUrl,
+        }));
+      } finally {
+        dispatch(injectAccessToken({
+          token: token,
+          expiration: Date.now() + (expires_in * 1000),
+        }));
+        window.injectToken = undefined;
+      }
     };
   };
 

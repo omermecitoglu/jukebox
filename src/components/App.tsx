@@ -10,12 +10,12 @@ import Library from "./Library";
 import Loading from "./Loading";
 import Navigator from "./Navigator";
 import Player from "./Player";
+import UserProfile from "./UserProfile";
 
 const App = () => {
   const audioPlayer = useRef<HTMLAudioElement>(null);
   const [activeScreen, setActiveScreen] = useState("library");
   const isActivated = useAppSelector(state => state.app.active);
-  const accessToken = useAppSelector(state => state.user.accessToken);
   const currentTrack = useAppSelector(state => state.player.currentTrack);
   useCacheResolver();
 
@@ -25,7 +25,7 @@ const App = () => {
       case "playlists": return <div>TODO: add playlists feature</div>;
       case "player": return audioPlayer.current && <Player source={audioPlayer.current} />;
       case "downloader": return <Downloader />;
-      case "settings": return <div>{accessToken}</div>;
+      case "settings": return <UserProfile />;
       default: return <div>Something went wrong.</div>;
     }
   }, [activeScreen]);
