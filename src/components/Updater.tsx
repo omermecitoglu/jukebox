@@ -1,10 +1,13 @@
 import { useEffect } from "react";
+import useInquiry from "~/hooks/useInquiry";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
 import { activate } from "~/redux/features/app";
-import { useAppDispatch } from "~/redux/hooks";
+import { useAppDispatch, useAppSelector } from "~/redux/hooks";
 
 const Updater = () => {
   const isOnline = useNavigatorOnLine();
+  const subscriptions = useAppSelector(state => state.library.downloads);
+  const [inquire] = useInquiry();
   const dispatch = useAppDispatch();
   useEffect(() => {
     (async () => {
@@ -29,6 +32,11 @@ const Updater = () => {
         if (isOnline) {
           await fetch("/api/socket");
         }
+        if (subscriptions.length) {
+          await inquire(subscriptions.map(d => d.videoId).join(","), true);
+        }
+      } catch (error) {
+        console.error(error);
       } finally {
         dispatch(activate());
       }

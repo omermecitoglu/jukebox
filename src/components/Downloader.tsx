@@ -2,14 +2,13 @@ import { faBroom } from "@fortawesome/free-solid-svg-icons/faBroom";
 import { faDownload } from "@fortawesome/free-solid-svg-icons/faDownload";
 import React, { useRef, useState } from "react";
 import Form from "react-bootstrap/Form";
-import { apiGet } from "~/app/api/fetch";
 import { idealHeight, openCentered } from "~/core/open";
 import { generateAuthUrl, getUserInfo } from "~/core/youtube";
+import useInquiry from "~/hooks/useInquiry";
 import useNavigatorOnLine from "~/hooks/useNavigatorOnLine";
-import { addDownload, addSong, clearDownloads } from "~/redux/features/library";
+import { clearDownloads } from "~/redux/features/library";
 import { deleteAccessToken, injectAccessToken, injectUserProfile } from "~/redux/features/user";
 import { useAppDispatch, useAppSelector } from "~/redux/hooks";
-import type { InquiryResult } from "~/server/inquiry";
 import { getPlaylistId } from "~/utils/youtube";
 import CoolButton from "./CoolButton";
 import DownloadSubscription from "./DownloadSubscription";
@@ -25,8 +24,8 @@ const Downloader = () => {
   const accessToken = useAppSelector(state => state.user.accessToken);
   const accessTokenExpiration = useAppSelector(state => state.user.accessTokenExpiration);
   const subscriptions = useAppSelector(state => state.library.downloads);
-  const [inquiring, setInquiring] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState("");
+  const [inquire, inquiring] = useInquiry();
   const dispatch = useAppDispatch();
   const popup = useRef<Window>();
 
@@ -68,28 +67,7 @@ const Downloader = () => {
     }
 
     setYoutubeLink("");
-    setInquiring(true);
-    try {
-      const response = await apiGet<InquiryResult[]>("inquire",
-        accessToken ? { youtubeLink, accessToken } : { youtubeLink });
-      if (!response.success) {
-        return alert(response.error.message);
-      }
-      for (const result of response.data) {
-        switch (result.status) {
-          case "downloaded": {
-            dispatch(addSong(result.track));
-            break;
-          }
-          case "downloading": {
-            dispatch(addDownload(result.videoId));
-            break;
-          }
-        }
-      }
-    } finally {
-      setInquiring(false);
-    }
+    inquire(youtubeLink, false, accessToken ?? undefined);
   };
 
   return (

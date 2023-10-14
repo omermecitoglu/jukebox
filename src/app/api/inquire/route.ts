@@ -8,11 +8,12 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const youtubeLink = searchParams.get("youtubeLink");
-    const accessToken = searchParams.get("accessToken");
+    const collection = searchParams.get("collection");
+    const accessToken = searchParams.get("accessToken") || null;
     if (!youtubeLink) {
       throw new Error("Youtube link is not provided!");
     }
-    const videoIds = await getVideoIds(youtubeLink, accessToken);
+    const videoIds = collection === "true" ? youtubeLink.split(",") : await getVideoIds(youtubeLink, accessToken);
     const results = await inquireBulk(videoIds);
     return successResponse<InquiryResult[]>(results);
   } catch (error) {
