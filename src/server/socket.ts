@@ -13,6 +13,10 @@ export default function createSocketServer(server: number) {
         .emit("music:download:progress", jobId, data);
     }
   });
+  queueEvents.on("stalled", ({ jobId }) => {
+    io.to("download:subscriber:" + jobId)
+      .emit("music:download:progress", jobId, 0);
+  });
   queueEvents.on("completed", ({ returnvalue }) => {
     const track = JSON.parse(returnvalue) as Song;
     io.to("download:subscriber:" + track.id)
