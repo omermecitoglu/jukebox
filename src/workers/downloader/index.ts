@@ -20,6 +20,13 @@ const worker = new Worker<DownloadData>("music:download", async job => {
       addToList("blacklist", job.name);
       throw new UnrecoverableError("Unrecoverable");
     }
+    if (error instanceof Error && error.message.includes("This is a private video.")) {
+      addToList("blacklist", job.name);
+      throw new UnrecoverableError("Unrecoverable");
+    }
+    if (error instanceof Error && error.message.includes("Status code: 403")) {
+      throw error;
+    }
     console.log("Exception!!!");
     console.error(error);
     throw error;
