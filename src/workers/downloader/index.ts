@@ -7,28 +7,11 @@ import type { DownloadData } from "../../server/downloader";
 
 const worker = new Worker<DownloadData>("music:download", async job => {
   try {
-    const track = await fetchTrack(job.name, getDownloadsPath(), p => job.updateProgress(p));
-    return JSON.stringify(track);
+    return JSON.stringify(await fetchTrack(job.name, getDownloadsPath(), p => job.updateProgress(p)));
   } catch (error) {
-    if (error instanceof Error && error.message.endsWith("is too long!")) {
-      // video is too long. skip!
+    if (error instanceof UnrecoverableError) {
       addToList("blacklist", job.name);
-      throw new UnrecoverableError("Unrecoverable");
     }
-    if (typeof error === "string" && error.includes("ffmpeg exited with code 1:")) {
-      // ffmpeg error. skip!
-      addToList("blacklist", job.name);
-      throw new UnrecoverableError("Unrecoverable");
-    }
-    if (error instanceof Error && error.message.includes("This is a private video.")) {
-      addToList("blacklist", job.name);
-      throw new UnrecoverableError("Unrecoverable");
-    }
-    if (error instanceof Error && error.message.includes("Status code: 403")) {
-      throw error;
-    }
-    console.log("Exception!!!");
-    console.error(error);
     throw error;
   }
 }, {

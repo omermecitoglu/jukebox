@@ -13,6 +13,8 @@ export async function requestDownload(videoId: string) {
         type: "exponential",
         delay: 1000,
       },
+      removeOnComplete: true,
+      removeOnFail: true,
     },
   });
   queue.add(videoId, null, { jobId: videoId });
