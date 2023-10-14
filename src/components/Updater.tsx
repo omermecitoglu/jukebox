@@ -35,8 +35,6 @@ const Updater = () => {
         if (subscriptions.length) {
           await inquire(subscriptions.map(d => d.videoId).join(","), true);
         }
-      } catch (error) {
-        console.error(error);
       } finally {
         dispatch(activate());
       }

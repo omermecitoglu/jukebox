@@ -1,8 +1,7 @@
 import "server-only";
 import type { Song } from "~/redux/features/library";
-import { isBlacklisted } from "~/server/blacklist";
 import { isDownloaded } from "~/server/storage";
-import { getRecords } from "./db";
+import { getRecords, isInList } from "./db";
 import { requestDownload } from "./downloader";
 
 type InquiryStatus = "downloaded" | "downloading" | "unavailable";
@@ -17,7 +16,7 @@ export type InquiryResult<Status extends InquiryStatus = InquiryStatus> = Status
 };
 
 async function inquire(videoId: string): Promise<InquiryResult> {
-  if (await isBlacklisted(videoId)) {
+  if (await isInList(videoId, "blacklist")) {
     return {
       videoId,
       status: "unavailable",

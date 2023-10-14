@@ -22,6 +22,7 @@ const useInquiry = (): [(youtubeLink: string, collection: boolean, accessToken?:
       for (const result of response.data) {
         switch (result.status) {
           case "downloaded": {
+            dispatch(removeDownload(result.track.id));
             dispatch(addSong(result.track));
             break;
           }
