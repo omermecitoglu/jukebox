@@ -22,7 +22,7 @@ services:
       - redis
   downloader:
     container_name: downloader
-    build: .
+    build: ./src/workers/downloader
     command: sh -c "npm install && npm run downloader"
     environment: # LIST OF ENV VARS
       - REDIS_HOST=redis
