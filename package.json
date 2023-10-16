@@ -3,6 +3,8 @@
   "name": "jukebox",
   "version": "1.0.0",
   "description": "a React application is designed to provide a seamless music listening experience",
+  "author": "Omer Mecitoglu",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "downloader": "tsx src/workers/downloader/index.ts",
