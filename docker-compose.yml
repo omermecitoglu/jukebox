@@ -9,15 +9,11 @@ services:
       - database:/data/db
   app:
     container_name: app
-    image: node:18.18.0-slim
-    command: sh -c "npm install && npm run build && npm start"
+    build: .
     environment: # LIST OF ENV VARS
       - REDIS_HOST=redis
-    ports: # LIST OF PORTS MAPPED
-      - '3000:3000'
-    working_dir: /app
     volumes:
-      - ./:/app
+      - downloads:/app/downloads 
     depends_on:
       - redis
   downloader:
@@ -37,13 +33,15 @@ services:
     ports:
       - 80:80
     volumes:
-      - ./downloads:/opt/music
+      - downloads:/opt/music
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - app
   ngrok:
     container_name: tunnel
     image: ngrok/ngrok:latest
+    ports:
+      - "4040:4040"
     command:
       - "start"
       - "--all"
