@@ -22,13 +22,13 @@ services:
       - redis
   downloader:
     container_name: downloader
-    build: ./src/workers/downloader
-    command: sh -c "npm install && npm run downloader"
+    build:
+      context: ./
+      dockerfile: ./src/workers/downloader/Dockerfile
     environment: # LIST OF ENV VARS
       - REDIS_HOST=redis
-    working_dir: /app
     volumes:
-      - ./:/app
+      - downloads:/app/downloads
     depends_on:
       - redis
   nginx:
@@ -55,3 +55,4 @@ services:
       - nginx
 volumes:
   database:
+  downloads:
